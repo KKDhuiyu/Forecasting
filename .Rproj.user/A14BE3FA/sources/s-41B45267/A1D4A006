@@ -1,0 +1,22 @@
+{
+    "collab_server" : "",
+    "contents" : "",
+    "created" : 1522035169566.000,
+    "dirty" : false,
+    "encoding" : "UTF-8",
+    "folds" : "",
+    "hash" : "0",
+    "id" : "A1D4A006",
+    "lastKnownWriteTime" : 1522031611,
+    "last_content_update" : 1522031611,
+    "path" : "C:/Users/jasper.jia/Desktop/read.R",
+    "project_path" : null,
+    "properties" : {
+        "cursorPosition" : "9,6",
+        "scrollLine" : "0"
+    },
+    "relative_order" : 6,
+    "source_on_save" : false,
+    "source_window" : "",
+    "type" : "r_source"
+}

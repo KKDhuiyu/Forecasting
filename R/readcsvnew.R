@@ -3,11 +3,19 @@
 #' Simple wrapper for read.csv
 #' 
 #' @export
-#' @param file a csv file.
-#' @param ... arguments passed to read.csv
-readcsvnew <- function(file, ...){
-  if(!grepl(".csv$", file)){
+#' @param config a csv file.
+#' @param input a csv file.
+
+readconfig <- function(config){
+  if(!grepl(".csv$", config)){
     stop("Uploaded file must be a .csv file!")
   }
-  read.csv(file, ...);
+  read.csv(config);
+}
+
+readinput <- function(input){
+  if(!grepl(".csv$", input)){
+    stop("Uploaded file must be a .csv file!")
+  }
+  read.csv(input);
 }

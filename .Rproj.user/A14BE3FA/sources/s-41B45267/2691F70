@@ -1,0 +1,22 @@
+{
+    "collab_server" : "",
+    "contents" : "",
+    "created" : 1522034953013.000,
+    "dirty" : false,
+    "encoding" : "UTF-8",
+    "folds" : "",
+    "hash" : "1998830496",
+    "id" : "2691F70",
+    "lastKnownWriteTime" : 1522035261,
+    "last_content_update" : 1522035261276,
+    "path" : "C:/Users/jasper.jia/Desktop/Forecasting/R/readcsvnew.R",
+    "project_path" : "R/readcsvnew.R",
+    "properties" : {
+        "cursorPosition" : "7,0",
+        "scrollLine" : "0"
+    },
+    "relative_order" : 5,
+    "source_on_save" : false,
+    "source_window" : "",
+    "type" : "r_source"
+}
