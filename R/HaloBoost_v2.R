@@ -1,4 +1,7 @@
-
+# Library ----
+#' @export
+#' @param configFile a csv file.
+#' @param inputFile a csv file.
 #' Utility.R 
 #' 
 
@@ -362,630 +365,610 @@ defaultsTo <- function(defaultValue, configArray, paramName) {
 ######################################################################
 ##### HaloBoost 2.0 #####
 
-# Time Stamp A ----
-A <- Sys.time()
+forecasting <- function(configFile,inputFile){
+  A <- Sys.time()
+  
+  
+  # Time Zone ----
+  Sys.setenv(TZ = 'GMT')
+  
 
-
-# Time Zone ----
-Sys.setenv(TZ = 'GMT')
-
-# Library ----
-#' @export
-#' @param configFile a csv file.
-#' @param inputFile a csv file.
-
-if (!require("readr")) {
-  install.packages("readr")
-}
-library(readr)
-if (!require("plyr")) {
-  install.packages("plyr")
-}
-library(plyr)
-if (!require("dplyr")) {
-  install.packages("dplyr")
-}
-library(dplyr)
-if (!require("lubridate")) {
-  install.packages("lubridate")
-}
-library(lubridate)
-if (!require("xgboost")) {
-  install.packages("xgboost")
-}
-library(xgboost)
-if (!require("ggplot2")) {
-  install.packages("ggplot2")
-}
-library(ggplot2)
-if (!require("zoo")) {
-  install.packages("zoo")
-}
-library(zoo)
-if (!require("randomForest")) {
-  install.packages("randomForest")
-}
-library(randomForest)
-
-# Suppress Warning Messages ----
-options(warn = -1)
-
-readconfig <- function(configFile){
-  if(!grepl(".csv$", configFile)){
-    stop("Uploaded file must be a .csv file!")
+  
+  if (!require("readr")) {
+    install.packages("readr")
   }
-  read.csv(
-    configFile,
-    skipNul = T,
-    colClasses = "character"
-  )
-}
-
-
-# Config Arguments ----
-row.names(config) <- config$name
-
-Date <- defaultsTo("PredictDate", config, "Date")
-Key <- defaultsTo("PredictGroup", config, "Key")
-Target <- defaultsTo("PredictMeasure", config, "Target")
-
-valid_start <-
-  ymd(defaultsTo(Sys.Date(), config, "ValidationStart"))
-valid_period <-
-  as.integer(defaultsTo(6, config, "AccuracyPeriodsMinimum"))
-
-XGBoost <-
-  as.logical(as.integer(defaultsTo(1, config, "UtilizeXgBoost")))
-RF <- as.logical(as.integer(defaultsTo(1, config, "UtilizeRf")))
-
-projection <- TRUE # we need projection to run future forecast
-
-project_period <-  as.integer(defaultsTo(6, config, "PeriodsCount"))
-
-granularity <- defaultsTo("Week", config, "TimeGranularity")
-
-specific_lag <-
-  defaultsTo(NA, config, "Specific_lag") # This should be NA by default
-
-ci <-
-  c(
-    defaultsTo(0.75, config, "ConfidenceLevel1"),
-    defaultsTo(0.9, config, "ConfidenceLevel2")
-  )
-
-
-
-# Validation/Projection Scroing/Number of Lag ----
-if (granularity == "Week") {
-  valid_end <- valid_start + weeks(valid_period - 1)
-  project_start <- valid_end + weeks(1)
-  project_end <- project_start + weeks(project_period - 1)
-  num_lag <- 52
-  
-} else if (granularity == "Month") {
-  valid_end <- valid_start + months(valid_period - 1)
-  project_start <- valid_end + months(1)
-  project_end <- project_start + months(project_period - 1)
-  num_lag <- 12
-  
-} else if (granularity == "Day") {
-  valid_end <- valid_start + days(valid_period - 1)
-  project_start <- valid_end + days(1)
-  project_end <- project_start + days(project_period - 1)
-  num_lag <- 30
-  
-} else {
-  stop(paste("Time Granularity is not properly defined."))
-}
-
-lag_list <- paste("lag", 1:num_lag, sep = "_")
-col.names <- c(
-  "PredictGroup",
-  "PredictDate",
-  "PredictValue",
-  "PredictValue_StdPlus",
-  "PredictValue_StdMinus",
-  "PredictValue_StdPlus2",
-  "PredictValue_StdMinus2",
-  "PredictMessage"
-)
-
-# Number of round of Simulation ----
-cf_round <- defaultsTo(2, config, "SimulationRound")
-
-# XGBoost Parameters ----
-eta <- defaultsTo(0.05, config, "XGBoost_eta")
-max_depth_xgb <- defaultsTo(100, config, "XGBoost_max_depth")
-nrounds <- defaultsTo(300, config, "XGBoost_nrounds")
-
-# Random Forest Parameters ----
-ntrees <- defaultsTo(20, config, "RF_ntrees")
-
-# Source utility.R
-# source(paste(path, "\\utility.R", sep = ""))
-readinput <- function(inputFile){
-  if(!grepl(".csv$", inputFile)){
-    stop("Uploaded file must be a .csv file!")
+  library(readr)
+  if (!require("plyr")) {
+    install.packages("plyr")
   }
-  read.csv(
-    inputFile,
-    skipNul = T,
-    colClasses = "character"
-  )
-}
-summary(input)
-
-# Standardize the variable name  ----
-colnames(input)[which(colnames(input) == Date)] <- "Date"
-colnames(input)[which(colnames(input) == Key)] <- "Key"
-colnames(input)[which(colnames(input) == Target)] <- "Target"
-
-# Format date variables ----
-input$Date <- ymd(input$Date)
-summary(input$Date)
-
-if (granularity == "Day") {
-  if (max(input$Date) - min(input$Date) < 60) {
-    stop(
-      "Insufficient Data. HaloBoost requires at least 60 days of daily data for each PredictGroup."
+  library(plyr)
+  if (!require("dplyr")) {
+    install.packages("dplyr")
+  }
+  library(dplyr)
+  if (!require("lubridate")) {
+    install.packages("lubridate")
+  }
+  library(lubridate)
+  if (!require("xgboost")) {
+    install.packages("xgboost")
+  }
+  library(xgboost)
+  if (!require("ggplot2")) {
+    install.packages("ggplot2")
+  }
+  library(ggplot2)
+  if (!require("zoo")) {
+    install.packages("zoo")
+  }
+  library(zoo)
+  if (!require("randomForest")) {
+    install.packages("randomForest")
+  }
+  library(randomForest)
+  
+  # Suppress Warning Messages ----
+  options(warn = -1)
+  
+ 
+    config <-read.csv(
+      configFile,
+      skipNul = T,
+      colClasses = "character"
     )
-  }
-} else {
-  if (max(input$Date) - min(input$Date) <= 365) {
-    stop("Insufficient Data. HaloBoost requires at least one year of data.")
-  } else if (max(input$Date) - min(input$Date) <= 547) {
-    message("Warning: Data ranges less than 1.5 year. We recommend to add more data to your input.")
-  }
-}
-
-# Sort data ----
-input <- input[order(input$Key, input$Date), ]
-
-# Create the variable t ----
-input$t <- with(input, ave(input$Key, input$Key, FUN = seq_along))
-
-# Separate Projection Scoring Dataset ----
-mpe <- function(actual, predict) {
-  x <- mean((actual - predict) / (actual+1))
-  return(x)
-}
-mape <- function(actual, predict) {
-  x <- mean(abs((actual - predict) / (actual+1)))
-  return(x)
-}
-if (projection) {
-  holdout <-
-    input[which(input$Date >= project_start &
-                  input$Date <= project_end),
-          which(colnames(input) == "Key" |
-                  colnames(input) == "Date" |
-                  colnames(input) == "Target")]
-  input$Target[which(input$Date >= project_start &
-                       input$Date <= project_end)] <- ""
-  input <- create.lag(
-    input = input,
-    variable = "Target",
-    lag_list = lag_list,
-    specific_lag = specific_lag
-  )
-  project <-
-    input[which(input$Date >= project_start &
-                  input$Date <= project_end), ]
-} else {
-  input <- create.lag(
-    input = input,
-    variable = "Target",
-    lag_list = lag_list,
-    specific_lag = specific_lag
-  )
-  project <- NA
-}
-
-input[lag_list] <- lapply(
-  input[lag_list],
-  FUN = function(x) {
-    x <- as.numeric(as.character(x))
-  }
-)
-
-# Declare train, test and project dataset ----
-test <-
-  input[which(input$Date >= valid_start & input$Date <= valid_end), ]
-train <- input[which(input$Date < valid_start), ]
-
-# Some Data Prep ----
-tmp <-
-  data.frame(
-    id = train$id,
-    date = train$Date,
-    Key = train$Key,
-    stringsAsFactors = F
-  )
-tmp2 <-
-  data.frame(date = test$Date,
-             Key = test$Key,
-             stringsAsFactors = F)
-train <- train[-c(1)]
-
-# Declare features ----
-feature.names <- names(train)[-c(3)]
-feature.names <-
-  feature.names[feature.names %!in% lag_list[-c(specific_lag)]]
-feature.names
-
-# Convert Character features to factor ----
-for (f in feature.names) {
-  if (class(train[[f]]) == "character") {
-    levels <- unique(c(train[[f]], test[[f]]))
-    train[[f]] <- as.integer(factor(train[[f]], levels = levels))
-    test[[f]]  <- as.integer(factor(test[[f]],  levels = levels))
-  }
-}
-
-# Convert all variable in train and test to numeric ----
-train[] <- lapply(train, as.numeric)
-test[] <- lapply(test, as.numeric)
-
-# XGBoost forecast ----
-if (XGBoost) {
-  # Data frame used in build out confidence interval
-  if (projection) {
-    cf_xgb <-
-      data.frame(
-        Key = input$Key[which(input$Date <= project_end)],
-        Date = input$Date[which(input$Date <= project_end)],
-        Target = input$Target[which(input$Date <= project_end)]
-      )
-  } else {
-    cf_xgb <-
-      data.frame(
-        Key = input$Key[which(input$Date <= valid_end)],
-        Date = input$Date[which(input$Date <= valid_end)],
-        Target = input$Target[which(input$Date <= valid_end)]
-      )
-  }
   
-  round <- cf_round
-  round_list <- paste("predict", 1:round, sep = "_")
   
-  # Simulation Start
-  for (i in 1:round) {
-    output_xgb <- forecast.xgboost(
-      train = train,
-      test = test,
-      Projection = projection,
-      proj_data = project
+  
+  # Config Arguments ----
+  row.names(config) <- config$name
+  
+  Date <- defaultsTo("PredictDate", config, "Date")
+  Key <- defaultsTo("PredictGroup", config, "Key")
+  Target <- defaultsTo("PredictMeasure", config, "Target")
+  
+  valid_start <-
+    ymd(defaultsTo(Sys.Date(), config, "ValidationStart"))
+  valid_period <-
+    as.integer(defaultsTo(6, config, "AccuracyPeriodsMinimum"))
+  
+  XGBoost <-
+    as.logical(as.integer(defaultsTo(1, config, "UtilizeXgBoost")))
+  RF <- as.logical(as.integer(defaultsTo(1, config, "UtilizeRf")))
+  
+  projection <- TRUE # we need projection to run future forecast
+  
+  project_period <-  as.integer(defaultsTo(6, config, "PeriodsCount"))
+  
+  granularity <- defaultsTo("Week", config, "TimeGranularity")
+  
+  specific_lag <-
+    defaultsTo(NA, config, "Specific_lag") # This should be NA by default
+  
+  ci <-
+    c(
+      defaultsTo(0.75, config, "ConfidenceLevel1"),
+      defaultsTo(0.9, config, "ConfidenceLevel2")
     )
-    # , grid_search = grid_search)
+  
+  
+  
+  # Validation/Projection Scroing/Number of Lag ----
+  if (granularity == "Week") {
+    valid_end <- valid_start + weeks(valid_period - 1)
+    project_start <- valid_end + weeks(1)
+    project_end <- project_start + weeks(project_period - 1)
+    num_lag <- 52
     
-    cf_xgb <-
-      cbind(cf_xgb,  assign(round_list[i], output_xgb$predict_xgb))
-    colnames(cf_xgb)[ncol(cf_xgb)] <- paste("predict", i, sep = "_")
-    rm(list = round_list[i])
-  }
-  
-  # Calculate mean and stdv
-  pred_names <- colnames(cf_xgb[,-c(1:3)])
-  cf_xgb <- cf_xgb %>%
-    rowwise() %>%
-    do(data.frame(., mean = mean(unlist(.[pred_names])),
-                  stdev = sd(unlist(.[pred_names]))))
-  
-  # Compute confidence interval
-  cf_xgb$upper1 <- cf_xgb$mean + qnorm(ci[1]) * cf_xgb$stdev
-  cf_xgb$lower1 <- cf_xgb$mean - qnorm(ci[1]) * cf_xgb$stdev
-  cf_xgb$upper2 <- cf_xgb$mean + qnorm(ci[2]) * cf_xgb$stdev
-  cf_xgb$lower2 <- cf_xgb$mean - qnorm(ci[2]) * cf_xgb$stdev
-  cf_xgb <- cf_xgb[, !names(cf_xgb) %in% pred_names]
-  
-  # Change colname mean to predict_xgb
-  colnames(cf_xgb)[4] <- "predict_xgb"
-}
-
-# Random Forest forecast ----
-if (RF) {
-  # Data frame used in build out confidence interval
-  if (projection) {
-    cf_rf <-
-      data.frame(
-        Key = input$Key[which(input$Date <= project_end)],
-        Date = input$Date[which(input$Date <= project_end)],
-        Target = input$Target[which(input$Date <= project_end)]
-      )
+  } else if (granularity == "Month") {
+    valid_end <- valid_start + months(valid_period - 1)
+    project_start <- valid_end + months(1)
+    project_end <- project_start + months(project_period - 1)
+    num_lag <- 12
+    
+  } else if (granularity == "Day") {
+    valid_end <- valid_start + days(valid_period - 1)
+    project_start <- valid_end + days(1)
+    project_end <- project_start + days(project_period - 1)
+    num_lag <- 30
+    
   } else {
-    cf_rf <-
-      data.frame(
-        Key = input$Key[which(input$Date <= valid_end)],
-        Date = input$Date[which(input$Date <= valid_end)],
-        Target = input$Target[which(input$Date <= valid_end)]
-      )
+    stop(paste("Time Granularity is not properly defined."))
   }
-  round <- cf_round
-  round_list <- paste("predict", 1:round, sep = "_")
   
-  # Simulation Start
-  for (i in 1:round) {
-    output_rf <- forecast.rf(
-      train = train,
-      test = test,
-      Projection = projection,
-      proj_data = project
+  lag_list <- paste("lag", 1:num_lag, sep = "_")
+  col.names <- c(
+    "PredictGroup",
+    "PredictDate",
+    "PredictValue",
+    "PredictValue_StdPlus",
+    "PredictValue_StdMinus",
+    "PredictValue_StdPlus2",
+    "PredictValue_StdMinus2",
+    "PredictMessage"
+  )
+  
+  # Number of round of Simulation ----
+  cf_round <- defaultsTo(2, config, "SimulationRound")
+  
+  # XGBoost Parameters ----
+  eta <- defaultsTo(0.05, config, "XGBoost_eta")
+  max_depth_xgb <- defaultsTo(100, config, "XGBoost_max_depth")
+  nrounds <- defaultsTo(300, config, "XGBoost_nrounds")
+  
+  # Random Forest Parameters ----
+  ntrees <- defaultsTo(20, config, "RF_ntrees")
+  
+  # Source utility.R
+  # source(paste(path, "\\utility.R", sep = ""))
+  input <- read.csv(
+      inputFile,
+      skipNul = T,
+      colClasses = "character"
+  
+  summary(input)
+  
+  # Standardize the variable name  ----
+  colnames(input)[which(colnames(input) == Date)] <- "Date"
+  colnames(input)[which(colnames(input) == Key)] <- "Key"
+  colnames(input)[which(colnames(input) == Target)] <- "Target"
+  
+  # Format date variables ----
+  input$Date <- ymd(input$Date)
+  summary(input$Date)
+  
+  if (granularity == "Day") {
+    if (max(input$Date) - min(input$Date) < 60) {
+      stop(
+        "Insufficient Data. HaloBoost requires at least 60 days of daily data for each PredictGroup."
+      )
+    }
+  } else {
+    if (max(input$Date) - min(input$Date) <= 365) {
+      stop("Insufficient Data. HaloBoost requires at least one year of data.")
+    } else if (max(input$Date) - min(input$Date) <= 547) {
+      message("Warning: Data ranges less than 1.5 year. We recommend to add more data to your input.")
+    }
+  }
+  
+  # Sort data ----
+  input <- input[order(input$Key, input$Date), ]
+  
+  # Create the variable t ----
+  input$t <- with(input, ave(input$Key, input$Key, FUN = seq_along))
+  
+  if (projection) {
+    holdout <-
+      input[which(input$Date >= project_start &
+                    input$Date <= project_end),
+            which(colnames(input) == "Key" |
+                    colnames(input) == "Date" |
+                    colnames(input) == "Target")]
+    input$Target[which(input$Date >= project_start &
+                         input$Date <= project_end)] <- ""
+    input <- create.lag(
+      input = input,
+      variable = "Target",
+      lag_list = lag_list,
+      specific_lag = specific_lag
+    )
+    project <-
+      input[which(input$Date >= project_start &
+                    input$Date <= project_end), ]
+  } else {
+    input <- create.lag(
+      input = input,
+      variable = "Target",
+      lag_list = lag_list,
+      specific_lag = specific_lag
+    )
+    project <- NA
+  }
+  
+  input[lag_list] <- lapply(
+    input[lag_list],
+    FUN = function(x) {
+      x <- as.numeric(as.character(x))
+    }
+  )
+  
+  # Declare train, test and project dataset ----
+  test <-
+    input[which(input$Date >= valid_start & input$Date <= valid_end), ]
+  train <- input[which(input$Date < valid_start), ]
+  
+  # Some Data Prep ----
+  tmp <-
+    data.frame(
+      id = train$id,
+      date = train$Date,
+      Key = train$Key,
+      stringsAsFactors = F
+    )
+  tmp2 <-
+    data.frame(date = test$Date,
+               Key = test$Key,
+               stringsAsFactors = F)
+  train <- train[-c(1)]
+  
+  # Declare features ----
+  feature.names <- names(train)[-c(3)]
+  feature.names <-
+    feature.names[feature.names %!in% lag_list[-c(specific_lag)]]
+  feature.names
+  
+  # Convert Character features to factor ----
+  for (f in feature.names) {
+    if (class(train[[f]]) == "character") {
+      levels <- unique(c(train[[f]], test[[f]]))
+      train[[f]] <- as.integer(factor(train[[f]], levels = levels))
+      test[[f]]  <- as.integer(factor(test[[f]],  levels = levels))
+    }
+  }
+  
+  # Convert all variable in train and test to numeric ----
+  train[] <- lapply(train, as.numeric)
+  test[] <- lapply(test, as.numeric)
+  
+  # XGBoost forecast ----
+  if (XGBoost) {
+    # Data frame used in build out confidence interval
+    if (projection) {
+      cf_xgb <-
+        data.frame(
+          Key = input$Key[which(input$Date <= project_end)],
+          Date = input$Date[which(input$Date <= project_end)],
+          Target = input$Target[which(input$Date <= project_end)]
+        )
+    } else {
+      cf_xgb <-
+        data.frame(
+          Key = input$Key[which(input$Date <= valid_end)],
+          Date = input$Date[which(input$Date <= valid_end)],
+          Target = input$Target[which(input$Date <= valid_end)]
+        )
+    }
+    
+    round <- cf_round
+    round_list <- paste("predict", 1:round, sep = "_")
+    
+    # Simulation Start
+    for (i in 1:round) {
+      output_xgb <- forecast.xgboost(
+        train = train,
+        test = test,
+        Projection = projection,
+        proj_data = project
+      )
+      # , grid_search = grid_search)
+      
+      cf_xgb <-
+        cbind(cf_xgb,  assign(round_list[i], output_xgb$predict_xgb))
+      colnames(cf_xgb)[ncol(cf_xgb)] <- paste("predict", i, sep = "_")
+      rm(list = round_list[i])
+    }
+    
+    # Calculate mean and stdv
+    pred_names <- colnames(cf_xgb[,-c(1:3)])
+    cf_xgb <- cf_xgb %>%
+      rowwise() %>%
+      do(data.frame(., mean = mean(unlist(.[pred_names])),
+                    stdev = sd(unlist(.[pred_names]))))
+    
+    # Compute confidence interval
+    cf_xgb$upper1 <- cf_xgb$mean + qnorm(ci[1]) * cf_xgb$stdev
+    cf_xgb$lower1 <- cf_xgb$mean - qnorm(ci[1]) * cf_xgb$stdev
+    cf_xgb$upper2 <- cf_xgb$mean + qnorm(ci[2]) * cf_xgb$stdev
+    cf_xgb$lower2 <- cf_xgb$mean - qnorm(ci[2]) * cf_xgb$stdev
+    cf_xgb <- cf_xgb[, !names(cf_xgb) %in% pred_names]
+    
+    # Change colname mean to predict_xgb
+    colnames(cf_xgb)[4] <- "predict_xgb"
+  }
+  
+  # Random Forest forecast ----
+  if (RF) {
+    # Data frame used in build out confidence interval
+    if (projection) {
+      cf_rf <-
+        data.frame(
+          Key = input$Key[which(input$Date <= project_end)],
+          Date = input$Date[which(input$Date <= project_end)],
+          Target = input$Target[which(input$Date <= project_end)]
+        )
+    } else {
+      cf_rf <-
+        data.frame(
+          Key = input$Key[which(input$Date <= valid_end)],
+          Date = input$Date[which(input$Date <= valid_end)],
+          Target = input$Target[which(input$Date <= valid_end)]
+        )
+    }
+    round <- cf_round
+    round_list <- paste("predict", 1:round, sep = "_")
+    
+    # Simulation Start
+    for (i in 1:round) {
+      output_rf <- forecast.rf(
+        train = train,
+        test = test,
+        Projection = projection,
+        proj_data = project
+      )
+      
+      cf_rf <-
+        cbind(cf_rf,  assign(round_list[i], output_rf$predict_rf))
+      colnames(cf_rf)[ncol(cf_rf)] <- paste("predict", i, sep = "_")
+      rm(list = round_list[i])
+    }
+    
+    # Calculate mean and stdv
+    pred_names <- colnames(cf_rf[,-c(1:3)])
+    cf_rf <- cf_rf %>%
+      rowwise() %>%
+      do(data.frame(., mean = mean(unlist(.[pred_names])),
+                    stdev = sd(unlist(.[pred_names]))))
+    
+    # Compute confidence interval
+    cf_rf$upper1 <- cf_rf$mean + qnorm(ci[1]) * cf_rf$stdev
+    cf_rf$lower1 <- cf_rf$mean - qnorm(ci[1]) * cf_rf$stdev
+    cf_rf$upper2 <- cf_rf$mean + qnorm(ci[2]) * cf_rf$stdev
+    cf_rf$lower2 <- cf_rf$mean - qnorm(ci[2]) * cf_rf$stdev
+    cf_rf <- cf_rf[, !names(cf_rf) %in% pred_names]
+    
+    # Change colname mean to predict_rf
+    colnames(cf_rf)[4] <- "predict_rf"
+    
+  }
+  
+  # Validation ----
+  if (XGBoost) {
+    valid_xgb <- validation(output = output_xgb, forecast = "XGBoost")
+    print(valid_xgb)
+    cat("\n")
+    
+    # # Output
+    output_xgb <- output_xgb[, which(
+      colnames(output_xgb) == "Key" |
+        colnames(output_xgb) == "Date" |
+        colnames(output_xgb) == "predict_xgb"
+    )]
+    # Matching SQL Format ----
+    output_xgb$PredictValue_StdPlus <- cf_xgb$upper1
+    output_xgb$PredictValue_StdMinus <- cf_xgb$lower1
+    output_xgb$PredictValue_StdPlus2 <- cf_xgb$upper2
+    output_xgb$PredictValue_StdMinus2 <- cf_xgb$lower2
+    output_xgb$PredictMessage <- "XGB"
+    
+    
+    
+    #valid_xgbation Plot
+    print(
+      ggplot(data = valid_xgb) +
+        geom_line(
+          aes(
+            y = valid_xgb$Sum_of_Predict,
+            x = valid_xgb$Date,
+            color = "Predict"
+          ),
+          stat = "identity"
+        ) +
+        geom_line(
+          aes(
+            y = valid_xgb$Sum_of_Actual,
+            x = valid_xgb$Date,
+            color = "Actual"
+          ),
+          stat = "identity"
+        ) +
+        scale_colour_manual(
+          "",
+          breaks = c("Predict", "Actual"),
+          values = c("red", "green")
+        ) +
+        ggtitle("Actual versus XGboost Forecast") +
+        labs(y = Target, x = Date)
     )
     
-    cf_rf <-
-      cbind(cf_rf,  assign(round_list[i], output_rf$predict_rf))
-    colnames(cf_rf)[ncol(cf_rf)] <- paste("predict", i, sep = "_")
-    rm(list = round_list[i])
+    # Period over period valid_xgbation
+    valid_xgb_mon <- PoP_valid(data = valid_xgb, period = "month")
+    print(valid_xgb_mon)
+    cat('\n')
+    
+    valid_xgb_qtr <- PoP_valid(data = valid_xgb, period = "quarter")
+    print(valid_xgb_qtr)
+    cat('\n')
+    
+    # Variance calculation ----
+    cat(
+      "The variance of the XGBoost Model is",
+      (
+        sum(valid_xgb$Sum_of_Actual[which(valid_xgb$Date >= valid_start &
+                                            valid_xgb$Date <= valid_end)]) -
+          sum(valid_xgb$Sum_of_Predict[which(valid_xgb$Date >= valid_start &
+                                               valid_xgb$Date <= valid_end)])
+      ) /
+        sum(valid_xgb$Sum_of_Actual[which(valid_xgb$Date >= valid_start &
+                                            valid_xgb$Date <= valid_end)]),
+      "\n"
+    )
+    cat("\n")
+    cat("The MAPE of the XGBoost Model is",
+        mean(valid_xgb$APE[which(valid_xgb$Date >= valid_start &
+                                   valid_xgb$Date <= valid_end)]), "\n")
   }
   
-  # Calculate mean and stdv
-  pred_names <- colnames(cf_rf[,-c(1:3)])
-  cf_rf <- cf_rf %>%
-    rowwise() %>%
-    do(data.frame(., mean = mean(unlist(.[pred_names])),
-                  stdev = sd(unlist(.[pred_names]))))
-  
-  # Compute confidence interval
-  cf_rf$upper1 <- cf_rf$mean + qnorm(ci[1]) * cf_rf$stdev
-  cf_rf$lower1 <- cf_rf$mean - qnorm(ci[1]) * cf_rf$stdev
-  cf_rf$upper2 <- cf_rf$mean + qnorm(ci[2]) * cf_rf$stdev
-  cf_rf$lower2 <- cf_rf$mean - qnorm(ci[2]) * cf_rf$stdev
-  cf_rf <- cf_rf[, !names(cf_rf) %in% pred_names]
-  
-  # Change colname mean to predict_rf
-  colnames(cf_rf)[4] <- "predict_rf"
-  
-}
-
-# Validation ----
-if (XGBoost) {
-  valid_xgb <- validation(output = output_xgb, forecast = "XGBoost")
-  print(valid_xgb)
-  cat("\n")
-  
-  # # Output
-  output_xgb <- output_xgb[, which(
-    colnames(output_xgb) == "Key" |
-      colnames(output_xgb) == "Date" |
-      colnames(output_xgb) == "predict_xgb"
-  )]
-  # Matching SQL Format ----
-  output_xgb$PredictValue_StdPlus <- cf_xgb$upper1
-  output_xgb$PredictValue_StdMinus <- cf_xgb$lower1
-  output_xgb$PredictValue_StdPlus2 <- cf_xgb$upper2
-  output_xgb$PredictValue_StdMinus2 <- cf_xgb$lower2
-  output_xgb$PredictMessage <- "XGB"
-  
-  
-  
-  #valid_xgbation Plot
-  print(
-    ggplot(data = valid_xgb) +
-      geom_line(
-        aes(
-          y = valid_xgb$Sum_of_Predict,
-          x = valid_xgb$Date,
-          color = "Predict"
-        ),
-        stat = "identity"
-      ) +
-      geom_line(
-        aes(
-          y = valid_xgb$Sum_of_Actual,
-          x = valid_xgb$Date,
-          color = "Actual"
-        ),
-        stat = "identity"
-      ) +
-      scale_colour_manual(
-        "",
-        breaks = c("Predict", "Actual"),
-        values = c("red", "green")
-      ) +
-      ggtitle("Actual versus XGboost Forecast") +
-      labs(y = Target, x = Date)
-  )
-  
-  # Period over period valid_xgbation
-  valid_xgb_mon <- PoP_valid(data = valid_xgb, period = "month")
-  print(valid_xgb_mon)
-  cat('\n')
-  
-  valid_xgb_qtr <- PoP_valid(data = valid_xgb, period = "quarter")
-  print(valid_xgb_qtr)
-  cat('\n')
-  
-  # Variance calculation ----
-  cat(
-    "The variance of the XGBoost Model is",
-    (
-      sum(valid_xgb$Sum_of_Actual[which(valid_xgb$Date >= valid_start &
-                                          valid_xgb$Date <= valid_end)]) -
-        sum(valid_xgb$Sum_of_Predict[which(valid_xgb$Date >= valid_start &
-                                             valid_xgb$Date <= valid_end)])
-    ) /
-      sum(valid_xgb$Sum_of_Actual[which(valid_xgb$Date >= valid_start &
-                                          valid_xgb$Date <= valid_end)]),
-    "\n"
-  )
-  cat("\n")
-  cat("The MAPE of the XGBoost Model is",
-      mean(valid_xgb$APE[which(valid_xgb$Date >= valid_start &
-                                 valid_xgb$Date <= valid_end)]), "\n")
-}
-
-if (RF) {
-  # Validation
-  valid_rf <- validation(output = output_rf, forecast = "RF")
-  print(valid_rf)
-  cat('\n')
-  
-  output_rf <- output_rf[, which(
-    colnames(output_rf) == "Key" |
-      colnames(output_rf) == "Date" |
-      colnames(output_rf) == "predict_rf"
-  )]
-  # Matching SQL Format ----
-  output_rf$PredictValue_StdPlus <- cf_rf$upper1
-  output_rf$PredictValue_StdMinus <- cf_rf$lower1
-  output_rf$PredictValue_StdPlus2 <- cf_rf$upper2
-  output_rf$PredictValue_StdMinus2 <- cf_rf$lower2
-  output_rf$PredictMessage <- "RF"
-  
-  # Validation Plot
-  print(
-    ggplot(data = valid_rf) +
-      geom_line(
-        aes(
-          y = valid_rf$Sum_of_Predict,
-          x = valid_rf$Date,
-          color = "Predict"
-        ),
-        stat = "identity"
-      ) +
-      geom_line(
-        aes(
-          y = valid_rf$Sum_of_Actual,
-          x = valid_rf$Date,
-          color = "Actual"
-        ),
-        stat = "identity"
-      ) +
-      scale_colour_manual(
-        "",
-        breaks = c("Predict", "Actual"),
-        values = c("red", "green")
-      ) +
-      ggtitle("Actual versus Random Forest Forecast") +
-      labs(y = Target, x = Date)
-  )
-  
-  # Period over period validation
-  valid_rf_mon <- PoP_valid(data = valid_rf, period = "month")
-  print(valid_rf_mon)
-  cat('\n')
-  
-  valid_rf_qtr <- PoP_valid(data = valid_rf, period = "quarter")
-  print(valid_rf_qtr)
-  cat('\n')
-  
-  # Variance calculation
-  cat(
-    "The variance of the Random Forest Model is",
-    (
-      sum(valid_rf$Sum_of_Actual[which(valid_rf$Date >= valid_start &
-                                         valid_rf$Date <= valid_end)]) -
-        sum(valid_rf$Sum_of_Predict[which(valid_rf$Date >= valid_start &
-                                            valid_rf$Date <= valid_end)])
-    ) /
-      sum(valid_rf$Sum_of_Actual[which(valid_rf$Date >= valid_start &
-                                         valid_rf$Date <= valid_end)]),
-    "\n"
-  )
-  cat("\n")
-  cat("The MAPE of the Random Forest Model is",
-      mean(valid_rf$APE[which(valid_rf$Date >= valid_start &
-                                valid_rf$Date <= valid_end)]),
-      "\n")
-}
-
-# Ensemble model ----
-if (XGBoost & RF) {
-  output_esb <-
-    merge(output_rf[, 1:3], output_xgb[, 1:3], by = c("Key", "Date"))
-  output_esb <- output_esb[order(output_esb$Key,
-                                 output_esb$Date), ]
-  # If we enable projection scoring
-  if (projection) {
-    output_esb$Key <- input$Key[which(input$Date <= project_end)]
-    output_xgb$Key <- input$Key[which(input$Date <= project_end)]
-    output_rf$Key <- input$Key[which(input$Date <= project_end)]
-  } else {
-    output_esb$Key <- input$Key[which(input$Date <= valid_end)]
-    output_xgb$Key <- input$Key[which(input$Date <= valid_end)]
-    output_rf$Key <- input$Key[which(input$Date <= valid_end)]
+  if (RF) {
+    # Validation
+    valid_rf <- validation(output = output_rf, forecast = "RF")
+    print(valid_rf)
+    cat('\n')
+    
+    output_rf <- output_rf[, which(
+      colnames(output_rf) == "Key" |
+        colnames(output_rf) == "Date" |
+        colnames(output_rf) == "predict_rf"
+    )]
+    # Matching SQL Format ----
+    output_rf$PredictValue_StdPlus <- cf_rf$upper1
+    output_rf$PredictValue_StdMinus <- cf_rf$lower1
+    output_rf$PredictValue_StdPlus2 <- cf_rf$upper2
+    output_rf$PredictValue_StdMinus2 <- cf_rf$lower2
+    output_rf$PredictMessage <- "RF"
+    
+    # Validation Plot
+    print(
+      ggplot(data = valid_rf) +
+        geom_line(
+          aes(
+            y = valid_rf$Sum_of_Predict,
+            x = valid_rf$Date,
+            color = "Predict"
+          ),
+          stat = "identity"
+        ) +
+        geom_line(
+          aes(
+            y = valid_rf$Sum_of_Actual,
+            x = valid_rf$Date,
+            color = "Actual"
+          ),
+          stat = "identity"
+        ) +
+        scale_colour_manual(
+          "",
+          breaks = c("Predict", "Actual"),
+          values = c("red", "green")
+        ) +
+        ggtitle("Actual versus Random Forest Forecast") +
+        labs(y = Target, x = Date)
+    )
+    
+    # Period over period validation
+    valid_rf_mon <- PoP_valid(data = valid_rf, period = "month")
+    print(valid_rf_mon)
+    cat('\n')
+    
+    valid_rf_qtr <- PoP_valid(data = valid_rf, period = "quarter")
+    print(valid_rf_qtr)
+    cat('\n')
+    
+    # Variance calculation
+    cat(
+      "The variance of the Random Forest Model is",
+      (
+        sum(valid_rf$Sum_of_Actual[which(valid_rf$Date >= valid_start &
+                                           valid_rf$Date <= valid_end)]) -
+          sum(valid_rf$Sum_of_Predict[which(valid_rf$Date >= valid_start &
+                                              valid_rf$Date <= valid_end)])
+      ) /
+        sum(valid_rf$Sum_of_Actual[which(valid_rf$Date >= valid_start &
+                                           valid_rf$Date <= valid_end)]),
+      "\n"
+    )
+    cat("\n")
+    cat("The MAPE of the Random Forest Model is",
+        mean(valid_rf$APE[which(valid_rf$Date >= valid_start &
+                                  valid_rf$Date <= valid_end)]),
+        "\n")
   }
   
-  # Calculate Ensemble results
-  output_esb$predict_esb <-
-    (output_esb$predict_rf + output_esb$predict_xgb) / 2
-  output_esb <- output_esb[, -c(3, 4)]
-  
-  # Calculate Enseble confidence interval
-  output_esb$PredictValue_StdPlus <-
-    output_esb$predict_esb  + qnorm(ci[1]) * sqrt((cf_rf$stdev ^ 2 + cf_xgb$stdev ^
-                                                     2))
-  output_esb$PredictValue_StdMinus <-
-    output_esb$predict_esb  - qnorm(ci[1]) * sqrt((cf_rf$stdev ^ 2 + cf_xgb$stdev ^
-                                                     2))
-  output_esb$PredictValue_StdPlus2 <-
-    output_esb$predict_esb  + qnorm(ci[2]) * sqrt((cf_rf$stdev ^ 2 + cf_xgb$stdev ^
-                                                     2))
-  output_esb$PredictValue_StdMinus2 <-
-    output_esb$predict_esb  - qnorm(ci[2]) * sqrt((cf_rf$stdev ^ 2 + cf_xgb$stdev ^
-                                                     2))
-  output_esb$PredictMessage <- "ESB"
-  
-  # Assign column names
-  colnames(output_esb) <- col.names
-  colnames(output_xgb) <- col.names
-  colnames(output_rf) <- col.names
-  
-  # Combine results
-  final_output <- rbind(output_xgb, output_rf, output_esb)
-  final_output <-
-    cbind(rownames = row.names(final_output), final_output)
-  write_csv(final_output, 'output_csv.csv', col_names = TRUE)
-  
-  # Accuracy results
-  accuracy_output <-
-    accuracy.table(input = input, output = final_output)
-  accuracy_output <-
-    cbind(rownames = row.names(accuracy_output), accuracy_output)
-  write_csv(accuracy_output, 'accuracy_csv.csv')
-}
-
-# Write out files if just one model ----
-if (!XGBoost) {
-  # If we enable projection scoring
-  if (projection) {
-    output_rf$Key <- input$Key[which(input$Date <= project_end)]
-  } else {
-    output_rf$Key <- input$Key[which(input$Date <= valid_end)]
+  # Ensemble model ----
+  if (XGBoost & RF) {
+    output_esb <-
+      merge(output_rf[, 1:3], output_xgb[, 1:3], by = c("Key", "Date"))
+    output_esb <- output_esb[order(output_esb$Key,
+                                   output_esb$Date), ]
+    # If we enable projection scoring
+    if (projection) {
+      output_esb$Key <- input$Key[which(input$Date <= project_end)]
+      output_xgb$Key <- input$Key[which(input$Date <= project_end)]
+      output_rf$Key <- input$Key[which(input$Date <= project_end)]
+    } else {
+      output_esb$Key <- input$Key[which(input$Date <= valid_end)]
+      output_xgb$Key <- input$Key[which(input$Date <= valid_end)]
+      output_rf$Key <- input$Key[which(input$Date <= valid_end)]
+    }
+    
+    # Calculate Ensemble results
+    output_esb$predict_esb <-
+      (output_esb$predict_rf + output_esb$predict_xgb) / 2
+    output_esb <- output_esb[, -c(3, 4)]
+    
+    # Calculate Enseble confidence interval
+    output_esb$PredictValue_StdPlus <-
+      output_esb$predict_esb  + qnorm(ci[1]) * sqrt((cf_rf$stdev ^ 2 + cf_xgb$stdev ^
+                                                       2))
+    output_esb$PredictValue_StdMinus <-
+      output_esb$predict_esb  - qnorm(ci[1]) * sqrt((cf_rf$stdev ^ 2 + cf_xgb$stdev ^
+                                                       2))
+    output_esb$PredictValue_StdPlus2 <-
+      output_esb$predict_esb  + qnorm(ci[2]) * sqrt((cf_rf$stdev ^ 2 + cf_xgb$stdev ^
+                                                       2))
+    output_esb$PredictValue_StdMinus2 <-
+      output_esb$predict_esb  - qnorm(ci[2]) * sqrt((cf_rf$stdev ^ 2 + cf_xgb$stdev ^
+                                                       2))
+    output_esb$PredictMessage <- "ESB"
+    
+    # Assign column names
+    colnames(output_esb) <- col.names
+    colnames(output_xgb) <- col.names
+    colnames(output_rf) <- col.names
+    
+    # Combine results
+    final_output <- rbind(output_xgb, output_rf, output_esb)
+    final_output <-
+      cbind(rownames = row.names(final_output), final_output)
+    write_csv(final_output, 'output_csv.csv', col_names = TRUE)
+    
+    # Accuracy results
+    accuracy_output <-
+      accuracy.table(input = input, output = final_output)
+    accuracy_output <-
+      cbind(rownames = row.names(accuracy_output), accuracy_output)
+    write_csv(accuracy_output, 'accuracy_csv.csv')
   }
   
-  # Assign column names and combine results
-  colnames(output_rf) <- col.names
-  output_rf <- cbind(rownames = row.names(output_rf), output_rf)
-  write_csv(output_rf, 'output_csv.csv', col_names = TRUE)
-  
-  # Accuracy results
-  accuracy_output <-
-    accuracy.table(input = input, output = output_rf)
-  accuracy_output <-
-    cbind(rownames = row.names(accuracy_output), accuracy_output)
-  write_csv(accuracy_output,  'accuracy_csv.csv')
-  
-} else if (!RF) {
-  if (projection) {
-    output_xgb$Key <- input$Key[which(input$Date <= project_end)]
-  } else {
-    output_xgb$Key <- input$Key[which(input$Date <= valid_end)]
+  # Write out files if just one model ----
+  if (!XGBoost) {
+    # If we enable projection scoring
+    if (projection) {
+      output_rf$Key <- input$Key[which(input$Date <= project_end)]
+    } else {
+      output_rf$Key <- input$Key[which(input$Date <= valid_end)]
+    }
+    
+    # Assign column names and combine results
+    colnames(output_rf) <- col.names
+    output_rf <- cbind(rownames = row.names(output_rf), output_rf)
+    write_csv(output_rf, 'output_csv.csv', col_names = TRUE)
+    
+    # Accuracy results
+    accuracy_output <-
+      accuracy.table(input = input, output = output_rf)
+    accuracy_output <-
+      cbind(rownames = row.names(accuracy_output), accuracy_output)
+    write_csv(accuracy_output,  'accuracy_csv.csv')
+    
+  } else if (!RF) {
+    if (projection) {
+      output_xgb$Key <- input$Key[which(input$Date <= project_end)]
+    } else {
+      output_xgb$Key <- input$Key[which(input$Date <= valid_end)]
+    }
+    # Assign column names and combine results
+    colnames(output_xgb) <- col.names
+    output_xgb <- cbind(rownames = row.names(output_xgb), output_xgb)
+    write_csv(output_xgb,  'output_csv.csv', col_names = TRUE)
+    
+    # Accuracy results
+    accuracy_output <-
+      accuracy.table(input = input, output = output_xgb)
+    accuracy_output <-
+      cbind(rownames = row.names(accuracy_output), accuracy_output)
+    write_csv(accuracy_output, 'accuracy_csv.csv')
   }
-  # Assign column names and combine results
-  colnames(output_xgb) <- col.names
-  output_xgb <- cbind(rownames = row.names(output_xgb), output_xgb)
-  write_csv(output_xgb,  'output_csv.csv', col_names = TRUE)
   
-  # Accuracy results
-  accuracy_output <-
-    accuracy.table(input = input, output = output_xgb)
-  accuracy_output <-
-    cbind(rownames = row.names(accuracy_output), accuracy_output)
-  write_csv(accuracy_output, 'accuracy_csv.csv')
+  # Time Stamp B ----
+  B <- Sys.time()
+  B - A
 }
-
-# Time Stamp B ----
-B <- Sys.time()
-B - A
-
