@@ -29,8 +29,9 @@
         $("#submitbutton").attr("disabled", "disabled");
 
         //perform the request
-        var req = ocpu.call("readconfig", {
-          config : configfile
+        var req = ocpu.call("forecasting", {
+          inputFile: inputfile
+          configFile: configfile
         }, function(session){
           $("#printlink").attr("href", session.getLoc() + "R/.val/print")
           $("#rdalink").attr("href", session.getLoc() + "R/.val/rda")
@@ -39,16 +40,7 @@
           $("#jsonlink").attr("href", session.getLoc() + "R/.val/json")
           $("#mdlink").attr("href", session.getLoc() + "R/.val/md")
         });
-        var req = ocpu.call("readinput", {
-          input : inputfile
-        }, function(session){
-          $("#printlink").attr("href", session.getLoc() + "R/.val/print")
-          $("#rdalink").attr("href", session.getLoc() + "R/.val/rda")
-          $("#csvlink").attr("href", session.getLoc() + "R/.val/csv")
-          $("#tablink").attr("href", session.getLoc() + "R/.val/tab")
-          $("#jsonlink").attr("href", session.getLoc() + "R/.val/json")
-          $("#mdlink").attr("href", session.getLoc() + "R/.val/md")
-        });
+        
         
         
         //if R returns an error, alert the error message
