@@ -1,15 +1,4 @@
-<!DOCTYPE html>
-<html>
-  <head>
-    <title>Uploading a file</title>
-    
-    <!-- Include order: first jquery, then opencpu.js, and then your code -->
-    <script src="opencpu/jquery-1.10.2.min.js"></script>
-    <script src="opencpu/opencpu-0.4.js"></script>
-
-    <script>
-    //init this script when the page has loaded
-    $(document).ready(function(){
+$(document).ready(function(){
       $("#submitbutton").on("click", function(){
 
        alert("clicked ");
@@ -31,7 +20,7 @@
           alert("disabled");
         //perform the request
         var req = ocpu.call("forecasting", {
-          inputFile: inputfile,
+          inputFile: inputfile
           configFile: configfile
         }, function(session){
           $("#printlink").attr("href", session.getLoc() + "R/.val/print")
@@ -56,36 +45,3 @@
       });       
     });
         alert("done");
-    </script>
-    
-    <style>
-
-    </style>
-    
-  </head>
-    
-  <body>
-    <h1>Uploading a File</h1>
-    
-    <b>config File</b> <input type="file" id="configfile"> 
-    <b>input File</b> <input type="file" id="inputfile"> 
-    <br />
-    
-    <br />
-    <button id="submitbutton" type="button">Upload CSV file!</button>
-    <br>
-
-    <p>Export the data frame:</p>
-
-    <ol>
-      <li><a target="_blank" id="rdalink">rdata</a></li>    
-      <li><a target="_blank" id="jsonlink">json</a></li>
-      <li><a target="_blank" id="csvlink">csv</a></li>
-      <li><a target="_blank" id="tablink">tab</a></li>
-      <li><a target="_blank" id="printlink">print</a></li>
-      <li><a target="_blank" id="mdlink">markdown</a></li>
-    </ol>
-
-
-  </body>
-</html>
