@@ -32,7 +32,7 @@ create.lag <- function (input, variable, lag_list, specific_lag) {
   return(input)
 }
 
-forecast.rf <- function(train, test, Projection, proj_data) {
+forecast.rf <- function(train, test, Projection, proj_data,feature.names,ntrees,tmp,tmp2,projection) {
   # Train a random forest using all default parameters
   rfHex <- randomForest(  x = train[,c(feature.names)],
                           y = train$Target,
@@ -66,7 +66,7 @@ forecast.rf <- function(train, test, Projection, proj_data) {
   
   if (Projection) {
     # Start Projection Scoring
-    project <- projection.scoring(project = proj_data, forecast = "RF", model = rfHex)
+    project <- projection.scoring(project = proj_data, forecast = "RF", model = rfHex,feature.names)
     output <- rbind(train, test, project)
     output <- output[order(output$Key, output$Date),]
   } else {
@@ -144,7 +144,7 @@ forecast.xgboost <- function (train, test, Projection, proj_data,feature.names,e
   
   if (Projection) {
     # Start Projection Scoring 
-    project <- projection.scoring(project = proj_data, forecast = "XGBoost", model = clf)
+    project <- projection.scoring(project = proj_data, forecast = "XGBoost", model = clf,feature.names)
     output <- rbind(train, test, project)
     output <- output[order(output$Key, output$Date),]
   } else {
@@ -211,7 +211,7 @@ PoP_valid <- function(data, period) {
 }
 
 
-projection.scoring <- function(project, forecast, model) {
+projection.scoring <- function(project, forecast, model,feature.names) {
   # Projection Data clearning 
   for (f in feature.names) {
     if (class(project[[f]])=="character") {
@@ -694,6 +694,7 @@ forecasting <- function(configFile,inputFile){
         test = test,
         Projection = projection,
         proj_data = project
+        ,feature.names,ntrees,tmp,tmp2,projection
         
       )
       
