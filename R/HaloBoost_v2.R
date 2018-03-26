@@ -32,7 +32,7 @@ create.lag <- function (input, variable, lag_list, specific_lag) {
   return(input)
 }
 
-forecast.rf <- function(train, test, Projection, proj_data) {
+forecast.rf <- function(train, test, Projection, proj_data,feature.names) {
   # Train a random forest using all default parameters
   rfHex <- randomForest(  x = train[,c(feature.names)],
                           y = train$Target,
@@ -42,12 +42,12 @@ forecast.rf <- function(train, test, Projection, proj_data) {
                           mtry = 0.8*ncol(train),
                           importance = TRUE)
   
-  summary(rfHex)
+
   
   # Importance Matrix
   df <- importance(rfHex, type = 1)
   df <- as.matrix(df[order(df[,1],decreasing = TRUE ),])
-  print(df)
+
   
   # RF Prediction
   pred_train_rf <- predict(rfHex,newdata = train)
@@ -77,7 +77,7 @@ forecast.rf <- function(train, test, Projection, proj_data) {
   
 }
 
-forecast.xgboost <- function (train, test, Projection, proj_data) {
+forecast.xgboost <- function (train, test, Projection, proj_data,feature.names) {
   # Define error function
   tra <-train[,feature.names]
   RMPSE <- function(preds, dtrain) {
@@ -594,7 +594,7 @@ forecasting <- function(configFile,inputFile){
   feature.names <- names(train)[-c(3)]
   feature.names <-
     feature.names[feature.names %!in% lag_list[-c(specific_lag)]]
-  feature.names
+
   
   # Convert Character features to factor ----
   for (f in feature.names) {
@@ -637,7 +637,8 @@ forecasting <- function(configFile,inputFile){
         train = train,
         test = test,
         Projection = projection,
-        proj_data = project
+        proj_data = project,
+        feature.names = feature.names
       )
       # , grid_search = grid_search)
       
@@ -692,7 +693,8 @@ forecasting <- function(configFile,inputFile){
         train = train,
         test = test,
         Projection = projection,
-        proj_data = project
+        proj_data = project,
+        feature.names = feature.names
       )
       
       cf_rf <-
