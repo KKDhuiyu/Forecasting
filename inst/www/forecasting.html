@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Uploading a file</title>
+    
+    <!-- Include order: first jquery, then opencpu.js, and then your code -->
+    <script src="opencpu/jquery-1.10.2.min.js"></script>
+    <script src="opencpu/opencpu-0.4.js"></script>
+
+    <script>
+    //init this script when the page has loaded
+    $(document).ready(function(){
+      $("#submitbutton").on("click", function(){
+
+       
+        var configfile = $("#configfile")[0].files[0];
+        var inputfile = $("#inputfile")[0].files[0];
+        
+        if(!configfile){
+          alert("No config file selected.");
+          return;
+        }
+          if(!inputfile){
+          alert("No input file selected.");
+          return;
+        }
+
+        //disable the button during upload
+        $("#submitbutton").attr("disabled", "disabled");
+
+        //perform the request
+        var req = ocpu.call("readcsvnew", {
+          file : configfile,
+          fileinput: inputfile
+        }, function(session){
+          $("#printlink").attr("href", session.getLoc() + "R/.val/print")
+//          $("#rdalink").attr("href", session.getLoc() + "R/.val/rda")
+//          $("#csvlink").attr("href", session.getLoc() + "R/.val/csv")
+//          $("#tablink").attr("href", session.getLoc() + "R/.val/tab")
+//          $("#jsonlink").attr("href", session.getLoc() + "R/.val/json")
+//          $("#mdlink").attr("href", session.getLoc() + "R/.val/md")
+        });
+        
+        //if R returns an error, alert the error message
+        req.fail(function(){
+          alert("Server error: " + req.responseText);
+        });
+        
+        //after request complete, re-enable the button 
+        req.always(function(){
+          $("#submitbutton").removeAttr("disabled")
+        });        
+      });       
+    });
+    </script>
+    
+    <style>
+
+    </style>
+    
+  </head>
+    
+  <body>
+    <h1>Uploading a File</h1>
+    
+    <b>config File</b> <input type="file" id="configfile"> 
+    <b>input File</b> <input type="file" id="inputfile"> 
+    <br />
+    
+    <br />
+    <button id="submitbutton" type="button">Upload CSV file!</button>
+    <br>
+
+    <p>Export the data frame:</p>
+
+    <ol>   
+      <li><a target="_blank" id="jsonlink">json</a></li>
+      <li><a target="_blank" id="csvlink">csv</a></li>
+    </ol>
+
+
+  </body>
+</html>
