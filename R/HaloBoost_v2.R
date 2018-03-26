@@ -434,7 +434,7 @@ forecasting <- function(configFile,inputFile){
   XGBoost <-
     as.logical(as.integer(defaultsTo(1, config, "UtilizeXgBoost")))
   RF <- as.logical(as.integer(defaultsTo(1, config, "UtilizeRf")))
-  
+  RF <- F
   projection <- TRUE # we need projection to run future forecast
   
   project_period <-  as.integer(defaultsTo(6, config, "PeriodsCount"))
