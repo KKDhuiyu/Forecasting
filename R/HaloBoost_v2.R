@@ -970,5 +970,6 @@ forecasting <- function(configFile,inputFile){
   
   # Time Stamp B ----
   B <- Sys.time()
-  B - A
+  print(B-A)
+
 }
