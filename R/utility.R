@@ -1,4 +1,7 @@
-# Storage Place for HaloBoost Functions 
+#' Storage Place for HaloBoost Functions 
+#' 
+
+
 `%!in%` = Negate(`%in%`)
 
 create.lag <- function (input, variable, lag_list, specific_lag) {
