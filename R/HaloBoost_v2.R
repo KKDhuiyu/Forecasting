@@ -636,7 +636,7 @@ forecasting <- function(configFile,inputFile){
         test = test,
         Projection = projection,
         proj_data = project,
-        feature.names = feature.names
+        feature.names
         
       )
       # , grid_search = grid_search)
