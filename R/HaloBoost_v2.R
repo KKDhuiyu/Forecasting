@@ -508,9 +508,9 @@ forecasting <- function(configFile,inputFile){
 
   
   # Standardize the variable name  ----
-  colnames(input)[which(colnames(input) == Date)] <- "Date"
-  colnames(input)[which(colnames(input) == Key)] <- "Key"
-  colnames(input)[which(colnames(input) == Target)] <- "Target"
+  names(input)[(names(input) == Date)] <- "Date"
+  names(input)[(names(input) == Key)] <- "Key"
+  names(input)[(names(input) == Target)] <- "Target"
   
   # Format date variables ----
   input$Date <- ymd(input$Date)
