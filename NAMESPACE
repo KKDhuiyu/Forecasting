@@ -1,5 +1,6 @@
 export(hello)
 export(randomplot)
-export(readcsvnew)
+export(readconfig)
+export(readinput)
 export(printsummary)
 export(bostonhist)
