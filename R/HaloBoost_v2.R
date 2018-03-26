@@ -317,7 +317,7 @@ acf1 <- function(actual, predict) {
   return(x)
 }
 
-accuracy.table <- function(input, output) {
+accuracy.table <- function(input, output,Key, Date,valid_start,valid_end) {
   
   table <- data.frame()
   accuracy <- output
@@ -926,7 +926,7 @@ forecasting <- function(configFile,inputFile){
     
     # Accuracy results
     accuracy_output <-
-      accuracy.table(input = input, output = final_output)
+      accuracy.table(input = input, output = final_output,Key, Date,valid_start,valid_end)
     accuracy_output <-
       cbind(rownames = row.names(accuracy_output), accuracy_output)
     write_csv(accuracy_output, 'accuracy_csv.csv')
@@ -948,7 +948,7 @@ forecasting <- function(configFile,inputFile){
     
     # Accuracy results
     accuracy_output <-
-      accuracy.table(input = input, output = output_rf)
+      accuracy.table(input = input, output = output_rf,Key, Date,valid_start,valid_end)
     accuracy_output <-
       cbind(rownames = row.names(accuracy_output), accuracy_output)
     write_csv(accuracy_output,  'accuracy_csv.csv')
@@ -966,7 +966,7 @@ forecasting <- function(configFile,inputFile){
     
     # Accuracy results
     accuracy_output <-
-      accuracy.table(input = input, output = output_xgb)
+      accuracy.table(input = input, output = output_xgb,Key, Date,valid_start,valid_end)
     accuracy_output <-
       cbind(rownames = row.names(accuracy_output), accuracy_output)
     write_csv(accuracy_output, 'accuracy_csv.csv')
