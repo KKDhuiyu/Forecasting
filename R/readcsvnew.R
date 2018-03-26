@@ -6,7 +6,7 @@
 #' @param file a csv file.
 #' @param fileinput a csv file.
 #' @param ... arguments passed to read.csv
-conifg <- function(file, ...){
+config <- function(file, ...){
   if(!grepl(".csv$", file)){
     stop("Uploaded file must be a .csv file!")
   }
@@ -15,6 +15,7 @@ conifg <- function(file, ...){
     skipNul = T,
     colClasses = "character"
   )
+ 
 }
 print(config)
 input <- function(fileinput, ...){
