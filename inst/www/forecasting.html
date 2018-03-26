@@ -27,7 +27,7 @@
 
         //disable the button during upload
         $("#submitbutton").attr("disabled", "disabled");
-
+          alert("disabled")
         //perform the request
         var req = ocpu.call("forecasting", {
           inputFile: inputfile
@@ -41,7 +41,7 @@
           $("#mdlink").attr("href", session.getLoc() + "R/.val/md")
         });
         
-        
+        alert("session done")
         
         //if R returns an error, alert the error message
         req.fail(function(){
@@ -54,6 +54,7 @@
         });        
       });       
     });
+        alert("done")
     </script>
     
     <style>
