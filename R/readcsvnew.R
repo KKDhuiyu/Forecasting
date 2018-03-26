@@ -4,22 +4,10 @@
 #' 
 #' @export
 #' @param file a csv file.
-#' @param fileinput a csv file.
-
-
-config <-  read.csv(
-  file,
-  skipNul = T,
-  colClasses = "character"
-)
-
-print(config)
-
-input <-  read.csv(
-  fileinput,
-  skipNul = T,
-  colClasses = "character"
-)
-
-
-print(summary(input))
+#' @param ... arguments passed to read.csv
+readcsvnew <- function(file, ...){
+  if(!grepl(".csv$", file)){
+    stop("Uploaded file must be a .csv file!")
+  }
+  read.csv(file, ...);
+}
