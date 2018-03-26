@@ -32,7 +32,7 @@ create.lag <- function (input, variable, lag_list, specific_lag) {
   return(input)
 }
 
-forecast.rf <- function(train, test, Projection, proj_data,feature.names) {
+forecast.rf <- function(train, test, Projection, proj_data) {
   # Train a random forest using all default parameters
   rfHex <- randomForest(  x = train[,c(feature.names)],
                           y = train$Target,
@@ -77,7 +77,7 @@ forecast.rf <- function(train, test, Projection, proj_data,feature.names) {
   
 }
 
-forecast.xgboost <- function (train, test, Projection, proj_data,feature.names) {
+forecast.xgboost <- function (train, test, Projection, proj_data) {
   # Define error function
   tra <-train[,feature.names]
   RMPSE <- function(preds, dtrain) {
@@ -592,9 +592,7 @@ forecasting <- function(configFile,inputFile){
   
   # Declare features ----
   feature.names <- names(train)[-c(3)]
-  feature.names <-
-    feature.names[feature.names %!in% lag_list[-c(specific_lag)]]
-
+  feature.names <- feature.names[feature.names %!in% lag_list[-c(specific_lag)]]
   
   # Convert Character features to factor ----
   for (f in feature.names) {
@@ -637,8 +635,8 @@ forecasting <- function(configFile,inputFile){
         train = train,
         test = test,
         Projection = projection,
-        proj_data = project,
-        feature.names = feature.names
+        proj_data = project
+        
       )
       # , grid_search = grid_search)
       
@@ -693,8 +691,8 @@ forecasting <- function(configFile,inputFile){
         train = train,
         test = test,
         Projection = projection,
-        proj_data = project,
-        feature.names = feature.names
+        proj_data = project
+        
       )
       
       cf_rf <-
