@@ -29,17 +29,27 @@
         $("#submitbutton").attr("disabled", "disabled");
 
         //perform the request
-        var req = ocpu.call("readcsvnew", {
-          file : configfile,
-          fileinput: inputfile
+        var req = ocpu.call("readconfig", {
+          config : configfile
         }, function(session){
           $("#printlink").attr("href", session.getLoc() + "R/.val/print")
-//          $("#rdalink").attr("href", session.getLoc() + "R/.val/rda")
-//          $("#csvlink").attr("href", session.getLoc() + "R/.val/csv")
-//          $("#tablink").attr("href", session.getLoc() + "R/.val/tab")
-//          $("#jsonlink").attr("href", session.getLoc() + "R/.val/json")
-//          $("#mdlink").attr("href", session.getLoc() + "R/.val/md")
+          $("#rdalink").attr("href", session.getLoc() + "R/.val/rda")
+          $("#csvlink").attr("href", session.getLoc() + "R/.val/csv")
+          $("#tablink").attr("href", session.getLoc() + "R/.val/tab")
+          $("#jsonlink").attr("href", session.getLoc() + "R/.val/json")
+          $("#mdlink").attr("href", session.getLoc() + "R/.val/md")
         });
+        var req = ocpu.call("readinput", {
+          config : inputfile
+        }, function(session){
+          $("#printlink").attr("href", session.getLoc() + "R/.val/print")
+          $("#rdalink").attr("href", session.getLoc() + "R/.val/rda")
+          $("#csvlink").attr("href", session.getLoc() + "R/.val/csv")
+          $("#tablink").attr("href", session.getLoc() + "R/.val/tab")
+          $("#jsonlink").attr("href", session.getLoc() + "R/.val/json")
+          $("#mdlink").attr("href", session.getLoc() + "R/.val/md")
+        });
+        
         
         //if R returns an error, alert the error message
         req.fail(function(){
@@ -73,9 +83,13 @@
 
     <p>Export the data frame:</p>
 
-    <ol>   
+    <ol>
+      <li><a target="_blank" id="rdalink">rdata</a></li>    
       <li><a target="_blank" id="jsonlink">json</a></li>
       <li><a target="_blank" id="csvlink">csv</a></li>
+      <li><a target="_blank" id="tablink">tab</a></li>
+      <li><a target="_blank" id="printlink">print</a></li>
+      <li><a target="_blank" id="mdlink">markdown</a></li>
     </ol>
 
 
