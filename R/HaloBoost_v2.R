@@ -505,7 +505,7 @@ forecasting <- function(configFile,inputFile){
       skipNul = T,
       colClasses = "character"
   
-  summary(input)
+
   
   # Standardize the variable name  ----
   colnames(input)[which(colnames(input) == Date)] <- "Date"
@@ -514,7 +514,7 @@ forecasting <- function(configFile,inputFile){
   
   # Format date variables ----
   input$Date <- ymd(input$Date)
-  summary(input$Date)
+
   
   if (granularity == "Day") {
     if (max(input$Date) - min(input$Date) < 60) {
