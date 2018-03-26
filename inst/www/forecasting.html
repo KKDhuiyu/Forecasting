@@ -40,7 +40,7 @@
           $("#mdlink").attr("href", session.getLoc() + "R/.val/md")
         });
         var req = ocpu.call("readinput", {
-          config : inputfile
+          input : inputfile
         }, function(session){
           $("#printlink").attr("href", session.getLoc() + "R/.val/print")
           $("#rdalink").attr("href", session.getLoc() + "R/.val/rda")
