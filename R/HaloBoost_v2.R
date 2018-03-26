@@ -503,7 +503,7 @@ forecasting <- function(configFile,inputFile){
   input <- read.csv(
       inputFile,
       skipNul = T,
-      colClasses = "character"
+      colClasses = "character")
   
 
   
