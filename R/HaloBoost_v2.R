@@ -77,7 +77,7 @@ forecast.rf <- function(train, test, Projection, proj_data) {
   
 }
 
-forecast.xgboost <- function (train, test, Projection, proj_data,feature.names) {
+forecast.xgboost <- function (train, test, Projection, proj_data,feature.names,eta) {
   # Define error function
   tra <-train[,feature.names]
   RMPSE <- function(preds, dtrain) {
@@ -636,7 +636,7 @@ forecasting <- function(configFile,inputFile){
         test = test,
         Projection = projection,
         proj_data = project,
-        feature.names
+        feature.names, eta
         
       )
       # , grid_search = grid_search)
