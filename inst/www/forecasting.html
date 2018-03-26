@@ -12,10 +12,11 @@
     $(document).ready(function(){
       $("#submitbutton").on("click", function(){
 
-       
+       alert("clicked ")
         var configfile = $("#configfile")[0].files[0];
+          alert("config ")
         var inputfile = $("#inputfile")[0].files[0];
-        
+        alert("input ")
         if(!configfile){
           alert("No config file selected.");
           return;
