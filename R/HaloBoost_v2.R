@@ -66,7 +66,7 @@ forecast.rf <- function(train, test, Projection, proj_data,feature.names,ntrees,
   
   if (Projection) {
     # Start Projection Scoring
-    project <- projection.scoring(project = proj_data, forecast = "RF", model = rfHex,feature.names)
+    project <- projection.scoring(project = proj_data, forecast = "RF", model = rfHex,feature.names,lag_list)
     output <- rbind(train, test, project)
     output <- output[order(output$Key, output$Date),]
   } else {
@@ -144,7 +144,7 @@ forecast.xgboost <- function (train, test, Projection, proj_data,feature.names,e
   
   if (Projection) {
     # Start Projection Scoring 
-    project <- projection.scoring(project = proj_data, forecast = "XGBoost", model = clf,feature.names)
+    project <- projection.scoring(project = proj_data, forecast = "XGBoost", model = clf,feature.names,lag_list)
     output <- rbind(train, test, project)
     output <- output[order(output$Key, output$Date),]
   } else {
@@ -211,7 +211,7 @@ PoP_valid <- function(data, period) {
 }
 
 
-projection.scoring <- function(project, forecast, model,feature.names) {
+projection.scoring <- function(project, forecast, model,feature.names,lag_list) {
   # Projection Data clearning 
   for (f in feature.names) {
     if (class(project[[f]])=="character") {
