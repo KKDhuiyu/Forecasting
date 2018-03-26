@@ -32,7 +32,7 @@ create.lag <- function (input, variable, lag_list, specific_lag) {
   return(input)
 }
 
-forecast.rf <- function(train, test, Projection, proj_data,feature.names,ntrees,tmp,tmp2,projection) {
+forecast.rf <- function(train, test, Projection, proj_data,feature.names,ntrees,tmp,tmp2,projection,lag_list) {
   # Train a random forest using all default parameters
   rfHex <- randomForest(  x = train[,c(feature.names)],
                           y = train$Target,
@@ -77,7 +77,7 @@ forecast.rf <- function(train, test, Projection, proj_data,feature.names,ntrees,
   
 }
 
-forecast.xgboost <- function (train, test, Projection, proj_data,feature.names,eta,max_depth_xgb,nrounds,tmp,tmp2,projection) {
+forecast.xgboost <- function (train, test, Projection, proj_data,feature.names,eta,max_depth_xgb,nrounds,tmp,tmp2,projection,lag_list) {
   # Define error function
   tra <-train[,feature.names]
   RMPSE <- function(preds, dtrain) {
@@ -637,7 +637,7 @@ forecasting <- function(configFile,inputFile){
         Projection = projection,
         proj_data = project,
         feature.names, eta,max_depth_xgb, nrounds,
-        tmp,tmp2,projection
+        tmp,tmp2,projection,lag_list
         
       )
       # , grid_search = grid_search)
@@ -694,7 +694,7 @@ forecasting <- function(configFile,inputFile){
         test = test,
         Projection = projection,
         proj_data = project
-        ,feature.names,ntrees,tmp,tmp2,projection
+        ,feature.names,ntrees,tmp,tmp2,projection,lag_list
         
       )
       
