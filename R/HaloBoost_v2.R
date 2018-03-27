@@ -77,7 +77,8 @@ forecast.rf <- function(train, test, Projection, proj_data,feature.names,ntrees,
   
 }
 
-forecast.xgboost <- function (train, test, Projection, proj_data,feature.names,eta,max_depth_xgb,nrounds,tmp,tmp2,projection,lag_list,holdout) {
+forecast.xgboost <- function (train, test, Projection, proj_data,feature.names,eta,max_depth_xgb,nrounds,
+                              tmp,tmp2,projection,lag_list,holdout) {
   # Define error function
   tra <-train[,feature.names]
   RMPSE <- function(preds, dtrain) {
@@ -977,4 +978,5 @@ forecasting <- function(configFile,inputFile){
   # B <- Sys.time()
   # print(B-A)
 
+}
 }
