@@ -727,7 +727,7 @@ forecasting <- function(configFile,inputFile){
   # Validation ----
   if (XGBoost) {
     valid_xgb <- validation(output = output_xgb, forecast = "XGBoost")
-    print(valid_xgb)
+    # print(valid_xgb)
     cat("\n")
     
     # # Output
@@ -775,30 +775,30 @@ forecasting <- function(configFile,inputFile){
     
     # Period over period valid_xgbation
     valid_xgb_mon <- PoP_valid(data = valid_xgb, period = "month")
-    print(valid_xgb_mon)
-    cat('\n')
+    # print(valid_xgb_mon)
+    # cat('\n')
     
     valid_xgb_qtr <- PoP_valid(data = valid_xgb, period = "quarter")
-    print(valid_xgb_qtr)
-    cat('\n')
+    # print(valid_xgb_qtr)
+    # cat('\n')
     
     # Variance calculation ----
-    cat(
-      "The variance of the XGBoost Model is",
-      (
-        sum(valid_xgb$Sum_of_Actual[which(valid_xgb$Date >= valid_start &
-                                            valid_xgb$Date <= valid_end)]) -
-          sum(valid_xgb$Sum_of_Predict[which(valid_xgb$Date >= valid_start &
-                                               valid_xgb$Date <= valid_end)])
-      ) /
-        sum(valid_xgb$Sum_of_Actual[which(valid_xgb$Date >= valid_start &
-                                            valid_xgb$Date <= valid_end)]),
-      "\n"
-    )
-    cat("\n")
-    cat("The MAPE of the XGBoost Model is",
-        mean(valid_xgb$APE[which(valid_xgb$Date >= valid_start &
-                                   valid_xgb$Date <= valid_end)]), "\n")
+    # cat(
+    #   "The variance of the XGBoost Model is",
+    #   (
+    #     sum(valid_xgb$Sum_of_Actual[which(valid_xgb$Date >= valid_start &
+    #                                         valid_xgb$Date <= valid_end)]) -
+    #       sum(valid_xgb$Sum_of_Predict[which(valid_xgb$Date >= valid_start &
+    #                                            valid_xgb$Date <= valid_end)])
+    #   ) /
+    #     sum(valid_xgb$Sum_of_Actual[which(valid_xgb$Date >= valid_start &
+    #                                         valid_xgb$Date <= valid_end)]),
+    #   "\n"
+    # )
+    # cat("\n")
+    # cat("The MAPE of the XGBoost Model is",
+    #     mean(valid_xgb$APE[which(valid_xgb$Date >= valid_start &
+    #                                valid_xgb$Date <= valid_end)]), "\n")
   }
   
   if (RF) {
@@ -971,9 +971,10 @@ forecasting <- function(configFile,inputFile){
       cbind(rownames = row.names(accuracy_output), accuracy_output)
     write_csv(accuracy_output, 'accuracy_csv.csv')
   }
+
   
   # Time Stamp B ----
-  B <- Sys.time()
-  print(B-A)
+  # B <- Sys.time()
+  # print(B-A)
 
 }
