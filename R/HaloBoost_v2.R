@@ -728,7 +728,7 @@ forecasting <- function(configFile,inputFile){
   if (XGBoost) {
     valid_xgb <- validation(output = output_xgb, forecast = "XGBoost")
     # print(valid_xgb)
-    cat("\n")
+    # cat("\n")
     
     # # Output
     output_xgb <- output_xgb[, which(
@@ -774,11 +774,11 @@ forecasting <- function(configFile,inputFile){
     )
     
     # Period over period valid_xgbation
-    valid_xgb_mon <- PoP_valid(data = valid_xgb, period = "month")
+    # valid_xgb_mon <- PoP_valid(data = valid_xgb, period = "month")
     # print(valid_xgb_mon)
     # cat('\n')
     
-    valid_xgb_qtr <- PoP_valid(data = valid_xgb, period = "quarter")
+    # valid_xgb_qtr <- PoP_valid(data = valid_xgb, period = "quarter")
     # print(valid_xgb_qtr)
     # cat('\n')
     
@@ -847,130 +847,130 @@ forecasting <- function(configFile,inputFile){
         labs(y = Target, x = Date)
     )
     
-    # Period over period validation
-    valid_rf_mon <- PoP_valid(data = valid_rf, period = "month")
-    print(valid_rf_mon)
-    cat('\n')
-    
-    valid_rf_qtr <- PoP_valid(data = valid_rf, period = "quarter")
-    print(valid_rf_qtr)
-    cat('\n')
-    
-    # Variance calculation
-    cat(
-      "The variance of the Random Forest Model is",
-      (
-        sum(valid_rf$Sum_of_Actual[which(valid_rf$Date >= valid_start &
-                                           valid_rf$Date <= valid_end)]) -
-          sum(valid_rf$Sum_of_Predict[which(valid_rf$Date >= valid_start &
-                                              valid_rf$Date <= valid_end)])
-      ) /
-        sum(valid_rf$Sum_of_Actual[which(valid_rf$Date >= valid_start &
-                                           valid_rf$Date <= valid_end)]),
-      "\n"
-    )
-    cat("\n")
-    cat("The MAPE of the Random Forest Model is",
-        mean(valid_rf$APE[which(valid_rf$Date >= valid_start &
-                                  valid_rf$Date <= valid_end)]),
-        "\n")
-  }
+  #   # Period over period validation
+  #   valid_rf_mon <- PoP_valid(data = valid_rf, period = "month")
+  #   print(valid_rf_mon)
+  #   cat('\n')
+  #   
+  #   valid_rf_qtr <- PoP_valid(data = valid_rf, period = "quarter")
+  #   print(valid_rf_qtr)
+  #   cat('\n')
+  #   
+  #   # Variance calculation
+  #   cat(
+  #     "The variance of the Random Forest Model is",
+  #     (
+  #       sum(valid_rf$Sum_of_Actual[which(valid_rf$Date >= valid_start &
+  #                                          valid_rf$Date <= valid_end)]) -
+  #         sum(valid_rf$Sum_of_Predict[which(valid_rf$Date >= valid_start &
+  #                                             valid_rf$Date <= valid_end)])
+  #     ) /
+  #       sum(valid_rf$Sum_of_Actual[which(valid_rf$Date >= valid_start &
+  #                                          valid_rf$Date <= valid_end)]),
+  #     "\n"
+  #   )
+  #   cat("\n")
+  #   cat("The MAPE of the Random Forest Model is",
+  #       mean(valid_rf$APE[which(valid_rf$Date >= valid_start &
+  #                                 valid_rf$Date <= valid_end)]),
+  #       "\n")
+  # }
+  # 
+  # # Ensemble model ----
+  # if (XGBoost & RF) {
+  #   output_esb <-
+  #     merge(output_rf[, 1:3], output_xgb[, 1:3], by = c("Key", "Date"))
+  #   output_esb <- output_esb[order(output_esb$Key,
+  #                                  output_esb$Date), ]
+  #   # If we enable projection scoring
+  #   if (projection) {
+  #     output_esb$Key <- input$Key[which(input$Date <= project_end)]
+  #     output_xgb$Key <- input$Key[which(input$Date <= project_end)]
+  #     output_rf$Key <- input$Key[which(input$Date <= project_end)]
+  #   } else {
+  #     output_esb$Key <- input$Key[which(input$Date <= valid_end)]
+  #     output_xgb$Key <- input$Key[which(input$Date <= valid_end)]
+  #     output_rf$Key <- input$Key[which(input$Date <= valid_end)]
+  #   }
+  #   
+  #   # Calculate Ensemble results
+  #   output_esb$predict_esb <-
+  #     (output_esb$predict_rf + output_esb$predict_xgb) / 2
+  #   output_esb <- output_esb[, -c(3, 4)]
+  #   
+  #   # Calculate Enseble confidence interval
+  #   output_esb$PredictValue_StdPlus <-
+  #     output_esb$predict_esb  + qnorm(ci[1]) * sqrt((cf_rf$stdev ^ 2 + cf_xgb$stdev ^
+  #                                                      2))
+  #   output_esb$PredictValue_StdMinus <-
+  #     output_esb$predict_esb  - qnorm(ci[1]) * sqrt((cf_rf$stdev ^ 2 + cf_xgb$stdev ^
+  #                                                      2))
+  #   output_esb$PredictValue_StdPlus2 <-
+  #     output_esb$predict_esb  + qnorm(ci[2]) * sqrt((cf_rf$stdev ^ 2 + cf_xgb$stdev ^
+  #                                                      2))
+  #   output_esb$PredictValue_StdMinus2 <-
+  #     output_esb$predict_esb  - qnorm(ci[2]) * sqrt((cf_rf$stdev ^ 2 + cf_xgb$stdev ^
+  #                                                      2))
+  #   output_esb$PredictMessage <- "ESB"
+  #   
+  #   # Assign column names
+  #   colnames(output_esb) <- col.names
+  #   colnames(output_xgb) <- col.names
+  #   colnames(output_rf) <- col.names
+  #   
+  #   # Combine results
+  #   final_output <- rbind(output_xgb, output_rf, output_esb)
+  #   final_output <-
+  #     cbind(rownames = row.names(final_output), final_output)
+  #   write_csv(final_output, 'output_csv.csv', col_names = TRUE)
+  #   
+  #   # Accuracy results
+  #   accuracy_output <-
+  #     accuracy.table(input = input, output = final_output,Key, Date,valid_start,valid_end)
+  #   accuracy_output <-
+  #     cbind(rownames = row.names(accuracy_output), accuracy_output)
+  #   write_csv(accuracy_output, 'accuracy_csv.csv')
+  # }
   
-  # Ensemble model ----
-  if (XGBoost & RF) {
-    output_esb <-
-      merge(output_rf[, 1:3], output_xgb[, 1:3], by = c("Key", "Date"))
-    output_esb <- output_esb[order(output_esb$Key,
-                                   output_esb$Date), ]
-    # If we enable projection scoring
-    if (projection) {
-      output_esb$Key <- input$Key[which(input$Date <= project_end)]
-      output_xgb$Key <- input$Key[which(input$Date <= project_end)]
-      output_rf$Key <- input$Key[which(input$Date <= project_end)]
-    } else {
-      output_esb$Key <- input$Key[which(input$Date <= valid_end)]
-      output_xgb$Key <- input$Key[which(input$Date <= valid_end)]
-      output_rf$Key <- input$Key[which(input$Date <= valid_end)]
-    }
-    
-    # Calculate Ensemble results
-    output_esb$predict_esb <-
-      (output_esb$predict_rf + output_esb$predict_xgb) / 2
-    output_esb <- output_esb[, -c(3, 4)]
-    
-    # Calculate Enseble confidence interval
-    output_esb$PredictValue_StdPlus <-
-      output_esb$predict_esb  + qnorm(ci[1]) * sqrt((cf_rf$stdev ^ 2 + cf_xgb$stdev ^
-                                                       2))
-    output_esb$PredictValue_StdMinus <-
-      output_esb$predict_esb  - qnorm(ci[1]) * sqrt((cf_rf$stdev ^ 2 + cf_xgb$stdev ^
-                                                       2))
-    output_esb$PredictValue_StdPlus2 <-
-      output_esb$predict_esb  + qnorm(ci[2]) * sqrt((cf_rf$stdev ^ 2 + cf_xgb$stdev ^
-                                                       2))
-    output_esb$PredictValue_StdMinus2 <-
-      output_esb$predict_esb  - qnorm(ci[2]) * sqrt((cf_rf$stdev ^ 2 + cf_xgb$stdev ^
-                                                       2))
-    output_esb$PredictMessage <- "ESB"
-    
-    # Assign column names
-    colnames(output_esb) <- col.names
-    colnames(output_xgb) <- col.names
-    colnames(output_rf) <- col.names
-    
-    # Combine results
-    final_output <- rbind(output_xgb, output_rf, output_esb)
-    final_output <-
-      cbind(rownames = row.names(final_output), final_output)
-    write_csv(final_output, 'output_csv.csv', col_names = TRUE)
-    
-    # Accuracy results
-    accuracy_output <-
-      accuracy.table(input = input, output = final_output,Key, Date,valid_start,valid_end)
-    accuracy_output <-
-      cbind(rownames = row.names(accuracy_output), accuracy_output)
-    write_csv(accuracy_output, 'accuracy_csv.csv')
-  }
-  
-  # Write out files if just one model ----
-  if (!XGBoost) {
-    # If we enable projection scoring
-    if (projection) {
-      output_rf$Key <- input$Key[which(input$Date <= project_end)]
-    } else {
-      output_rf$Key <- input$Key[which(input$Date <= valid_end)]
-    }
-    
-    # Assign column names and combine results
-    colnames(output_rf) <- col.names
-    output_rf <- cbind(rownames = row.names(output_rf), output_rf)
-    write_csv(output_rf, 'output_csv.csv', col_names = TRUE)
-    
-    # Accuracy results
-    accuracy_output <-
-      accuracy.table(input = input, output = output_rf,Key, Date,valid_start,valid_end)
-    accuracy_output <-
-      cbind(rownames = row.names(accuracy_output), accuracy_output)
-    write_csv(accuracy_output,  'accuracy_csv.csv')
-    
-  } else if (!RF) {
-    if (projection) {
-      output_xgb$Key <- input$Key[which(input$Date <= project_end)]
-    } else {
-      output_xgb$Key <- input$Key[which(input$Date <= valid_end)]
-    }
-    # Assign column names and combine results
-    colnames(output_xgb) <- col.names
-    output_xgb <- cbind(rownames = row.names(output_xgb), output_xgb)
-    write_csv(output_xgb,  'output_csv.csv', col_names = TRUE)
-    
-    # Accuracy results
-    accuracy_output <-
-      accuracy.table(input = input, output = output_xgb,Key, Date,valid_start,valid_end)
-    accuracy_output <-
-      cbind(rownames = row.names(accuracy_output), accuracy_output)
-    write_csv(accuracy_output, 'accuracy_csv.csv')
-  }
+  # # Write out files if just one model ----
+  # if (!XGBoost) {
+  #   # If we enable projection scoring
+  #   if (projection) {
+  #     output_rf$Key <- input$Key[which(input$Date <= project_end)]
+  #   } else {
+  #     output_rf$Key <- input$Key[which(input$Date <= valid_end)]
+  #   }
+  #   
+  #   # Assign column names and combine results
+  #   colnames(output_rf) <- col.names
+  #   output_rf <- cbind(rownames = row.names(output_rf), output_rf)
+  #   write_csv(output_rf, 'output_csv.csv', col_names = TRUE)
+  #   
+  #   # Accuracy results
+  #   accuracy_output <-
+  #     accuracy.table(input = input, output = output_rf,Key, Date,valid_start,valid_end)
+  #   accuracy_output <-
+  #     cbind(rownames = row.names(accuracy_output), accuracy_output)
+  #   write_csv(accuracy_output,  'accuracy_csv.csv')
+  #   
+  # } else if (!RF) {
+  #   if (projection) {
+  #     output_xgb$Key <- input$Key[which(input$Date <= project_end)]
+  #   } else {
+  #     output_xgb$Key <- input$Key[which(input$Date <= valid_end)]
+  #   }
+  #   # Assign column names and combine results
+  #   colnames(output_xgb) <- col.names
+  #   output_xgb <- cbind(rownames = row.names(output_xgb), output_xgb)
+  #   write_csv(output_xgb,  'output_csv.csv', col_names = TRUE)
+  #   
+  #   # Accuracy results
+  #   accuracy_output <-
+  #     accuracy.table(input = input, output = output_xgb,Key, Date,valid_start,valid_end)
+  #   accuracy_output <-
+  #     cbind(rownames = row.names(accuracy_output), accuracy_output)
+  #   write_csv(accuracy_output, 'accuracy_csv.csv')
+  # }
 
   
   # Time Stamp B ----
