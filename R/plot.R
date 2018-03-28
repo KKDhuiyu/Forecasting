@@ -21,7 +21,7 @@ plot_forecasting <- function(mydata,algo){
   library(forecast)
   algorithm = algo
   
-  myts <- ts(mydata, start=c(2016, 1), end=c(2017, 12), frequency=12)
+  myts <- ts(mydata, start=c(2013, 4), end=c(2018, 3), frequency=12)
   if(algorithm == "ets"){
     print(autoplot(forecast(ets(myts))))
   }else if(algorithm == "ARIMA"){
