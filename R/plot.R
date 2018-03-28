@@ -19,14 +19,16 @@ plot_forecasting <- function(mydata,algo){
     install.packages("forecast")
   }
   library(forecast)
-  algorithm = paste(algo, "", R.Version()$version.string)
+  algorithm = algo[0]
+  
   myts <- ts(mydata, start=c(2016, 1), end=c(2017, 12), frequency=12)
   if(algorithm == "ets"){
     print(plot(forecast(ets(myts))))
   }else if(algorithm == "ARIMA"){
     print(plot(forecast(auto.arima(myts))))
   }else{
-    print(plot(forecast(myts)))
+    # print(plot(forecast(myts)))
+    print(algorithm)
   }
 }
 
