@@ -1,9 +1,18 @@
-// App Script
-null
-// App Script End
+<!DOCTYPE html>
+<html>
+  <head>
 
-// Prism data
-var prism= {
+
+
+    <style>
+    #plotdiv{
+        width: 300;
+        height: 300;
+        border: 1px solid black;
+    }    
+    </style>
+    <script>
+        var prism= {
  "pane" : {
 	"name": "Time",
 	"uniqueName": "[Time].[Time]",
@@ -324,11 +333,11 @@ var prism= {
  "context": {
 	"plugin": null,
 	"view": {
-		"id": "view:tabset=b0f71f3b-942b-45c0-953f-3e774aa91ba1;id=1116073311",
+		"id": "view:tabset=2f81bc32-6853-4959-9899-be3f1ef6dc0f;id=1116073311",
 		"uniqueId": 0,
 		"name": "Test",
 		"connectionString": "Provider=MSOLAP;Data Source=CLEANSERVER02\\SQL2016;Persist Security Info=False;Integrated Security=SSPI;Initial Catalog=HaloDemo_Coffee;Connect Timeout=30;Timeout=60",
-		"paneId": "001",
+		"paneId": "002",
 		"timeHierarchyIndex": 0,
 		"userName": "jasper.jia",
 		"userDomain": "halo.nz",
@@ -368,16 +377,6 @@ var prism= {
 			"memberUniqueNames": [
 				"[Measures].[Revenue]"
 			]
-		},
-		{
-			"type": "Standard",
-			"name": "Sales Offices",
-			"uniqueName": "[Sales Rep].[Sales Offices]",
-			"levelName": "Sales Office",
-			"levelUniqueName": "[Sales Rep].[Sales Offices].[Sales Office]",
-			"dimensionName": "Sales Rep",
-			"memberNames": [],
-			"memberUniqueNames": []
 		}
 	],
 	"cube": {
@@ -386,3 +385,25 @@ var prism= {
 		"cube": "Sales"
 	}
 } }
+        console.log(prism)
+      </script>
+    
+  </head>
+
+  <body>
+    <h1>Forecasting:</h1>
+    
+    <h2>Users Data : </h2>
+      <div id = "input"><span id="input_data">'+dialog_title+'</span></div>
+      
+      <h2>Algorithm: </h2>
+      <select id="interval">
+              <option selected="selected" value="hourly">Hourly</option>
+              <option value="daily">Daily</option>
+        </select> 
+      <h2>Plot</h2>
+      <div id = "plotdiv"></div>
+
+    
+  </body>
+</html>

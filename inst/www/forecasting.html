@@ -12,11 +12,11 @@
     $(document).ready(function(){
       $("#submitbutton").on("click", function(){
 
-       alert("clicked ");
+       
         var configfile = $("#configfile")[0].files[0];
-          alert("config ");
+         
         var inputfile = $("#inputfile")[0].files[0];
-        alert("input ");
+      
         if(!configfile){
           alert("No config file selected.");
           return;
@@ -42,7 +42,7 @@
           $("#mdlink").attr("href", session.getLoc() + "R/.val/md")
         });
         
-        alert("session done");
+     
         
         //if R returns an error, alert the error message
         req.fail(function(){
@@ -55,7 +55,7 @@
         });        
       });       
     });
-        alert("done");
+      
     </script>
     
     <style>
@@ -85,6 +85,8 @@
       <li><a target="_blank" id="printlink">print</a></li>
       <li><a target="_blank" id="mdlink">markdown</a></li>
     </ol>
+      <div id="plotdiv"></div>
+     
 
 
   </body>
