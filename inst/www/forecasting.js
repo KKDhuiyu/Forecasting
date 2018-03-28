@@ -1,8 +1,3 @@
-// App Script
-null
-// App Script End
-
-// Prism data
 var prism= {
  "pane" : {
 	"name": "Time",
@@ -36,8 +31,260 @@ var prism= {
 		{
 			"data": [
 				{
-					"value": "[Time].[Time].[Year].&[2017].&[20171].&[201701]",
+					"value": "[Time].[Time].[Year].&[2016].&[20161].&[201601]",
 					"id": "0"
+				},
+				{
+					"value": "January 2016"
+				},
+				{
+					"value": "3467532.16"
+				},
+				{
+					"value": ""
+				},
+				{
+					"value": ""
+				}
+			],
+			"selected": false
+		},
+		{
+			"data": [
+				{
+					"value": "[Time].[Time].[Year].&[2016].&[20161].&[201602]",
+					"id": "1"
+				},
+				{
+					"value": "February 2016"
+				},
+				{
+					"value": "3015730.99"
+				},
+				{
+					"value": ""
+				},
+				{
+					"value": ""
+				}
+			],
+			"selected": false
+		},
+		{
+			"data": [
+				{
+					"value": "[Time].[Time].[Year].&[2016].&[20161].&[201603]",
+					"id": "2"
+				},
+				{
+					"value": "March 2016"
+				},
+				{
+					"value": "3268106.67"
+				},
+				{
+					"value": ""
+				},
+				{
+					"value": ""
+				}
+			],
+			"selected": false
+		},
+		{
+			"data": [
+				{
+					"value": "[Time].[Time].[Year].&[2016].&[20162].&[201604]",
+					"id": "3"
+				},
+				{
+					"value": "April 2016"
+				},
+				{
+					"value": "2633098.33"
+				},
+				{
+					"value": ""
+				},
+				{
+					"value": ""
+				}
+			],
+			"selected": false
+		},
+		{
+			"data": [
+				{
+					"value": "[Time].[Time].[Year].&[2016].&[20162].&[201605]",
+					"id": "4"
+				},
+				{
+					"value": "May 2016"
+				},
+				{
+					"value": "4134126.12999999"
+				},
+				{
+					"value": ""
+				},
+				{
+					"value": ""
+				}
+			],
+			"selected": false
+		},
+		{
+			"data": [
+				{
+					"value": "[Time].[Time].[Year].&[2016].&[20162].&[201606]",
+					"id": "5"
+				},
+				{
+					"value": "June 2016"
+				},
+				{
+					"value": "4999100.55"
+				},
+				{
+					"value": ""
+				},
+				{
+					"value": ""
+				}
+			],
+			"selected": false
+		},
+		{
+			"data": [
+				{
+					"value": "[Time].[Time].[Year].&[2016].&[20163].&[201607]",
+					"id": "6"
+				},
+				{
+					"value": "July 2016"
+				},
+				{
+					"value": "5612759.3"
+				},
+				{
+					"value": ""
+				},
+				{
+					"value": ""
+				}
+			],
+			"selected": false
+		},
+		{
+			"data": [
+				{
+					"value": "[Time].[Time].[Year].&[2016].&[20163].&[201608]",
+					"id": "7"
+				},
+				{
+					"value": "August 2016"
+				},
+				{
+					"value": "5750717.18999999"
+				},
+				{
+					"value": ""
+				},
+				{
+					"value": ""
+				}
+			],
+			"selected": false
+		},
+		{
+			"data": [
+				{
+					"value": "[Time].[Time].[Year].&[2016].&[20163].&[201609]",
+					"id": "8"
+				},
+				{
+					"value": "September 2016"
+				},
+				{
+					"value": "5175161.39"
+				},
+				{
+					"value": ""
+				},
+				{
+					"value": ""
+				}
+			],
+			"selected": false
+		},
+		{
+			"data": [
+				{
+					"value": "[Time].[Time].[Year].&[2016].&[20164].&[201610]",
+					"id": "9"
+				},
+				{
+					"value": "October 2016"
+				},
+				{
+					"value": "4223637.59"
+				},
+				{
+					"value": ""
+				},
+				{
+					"value": ""
+				}
+			],
+			"selected": false
+		},
+		{
+			"data": [
+				{
+					"value": "[Time].[Time].[Year].&[2016].&[20164].&[201611]",
+					"id": "10"
+				},
+				{
+					"value": "November 2016"
+				},
+				{
+					"value": "3167378.07"
+				},
+				{
+					"value": ""
+				},
+				{
+					"value": ""
+				}
+			],
+			"selected": false
+		},
+		{
+			"data": [
+				{
+					"value": "[Time].[Time].[Year].&[2016].&[20164].&[201612]",
+					"id": "11"
+				},
+				{
+					"value": "December 2016"
+				},
+				{
+					"value": "4057891.13"
+				},
+				{
+					"value": ""
+				},
+				{
+					"value": ""
+				}
+			],
+			"selected": false
+		},
+		{
+			"data": [
+				{
+					"value": "[Time].[Time].[Year].&[2017].&[20171].&[201701]",
+					"id": "12"
 				},
 				{
 					"value": "January 2017"
@@ -59,7 +306,7 @@ var prism= {
 			"data": [
 				{
 					"value": "[Time].[Time].[Year].&[2017].&[20171].&[201702]",
-					"id": "1"
+					"id": "13"
 				},
 				{
 					"value": "February 2017"
@@ -81,7 +328,7 @@ var prism= {
 			"data": [
 				{
 					"value": "[Time].[Time].[Year].&[2017].&[20171].&[201703]",
-					"id": "2"
+					"id": "14"
 				},
 				{
 					"value": "March 2017"
@@ -103,7 +350,7 @@ var prism= {
 			"data": [
 				{
 					"value": "[Time].[Time].[Year].&[2017].&[20172].&[201704]",
-					"id": "3"
+					"id": "15"
 				},
 				{
 					"value": "April 2017"
@@ -125,7 +372,7 @@ var prism= {
 			"data": [
 				{
 					"value": "[Time].[Time].[Year].&[2017].&[20172].&[201705]",
-					"id": "4"
+					"id": "16"
 				},
 				{
 					"value": "May 2017"
@@ -147,7 +394,7 @@ var prism= {
 			"data": [
 				{
 					"value": "[Time].[Time].[Year].&[2017].&[20172].&[201706]",
-					"id": "5"
+					"id": "17"
 				},
 				{
 					"value": "June 2017"
@@ -169,7 +416,7 @@ var prism= {
 			"data": [
 				{
 					"value": "[Time].[Time].[Year].&[2017].&[20173].&[201707]",
-					"id": "6"
+					"id": "18"
 				},
 				{
 					"value": "July 2017"
@@ -191,7 +438,7 @@ var prism= {
 			"data": [
 				{
 					"value": "[Time].[Time].[Year].&[2017].&[20173].&[201708]",
-					"id": "7"
+					"id": "19"
 				},
 				{
 					"value": "August 2017"
@@ -213,7 +460,7 @@ var prism= {
 			"data": [
 				{
 					"value": "[Time].[Time].[Year].&[2017].&[20173].&[201709]",
-					"id": "8"
+					"id": "20"
 				},
 				{
 					"value": "September 2017"
@@ -235,7 +482,7 @@ var prism= {
 			"data": [
 				{
 					"value": "[Time].[Time].[Year].&[2017].&[20174].&[201710]",
-					"id": "9"
+					"id": "21"
 				},
 				{
 					"value": "October 2017"
@@ -257,7 +504,7 @@ var prism= {
 			"data": [
 				{
 					"value": "[Time].[Time].[Year].&[2017].&[20174].&[201711]",
-					"id": "10"
+					"id": "22"
 				},
 				{
 					"value": "November 2017"
@@ -279,7 +526,7 @@ var prism= {
 			"data": [
 				{
 					"value": "[Time].[Time].[Year].&[2017].&[20174].&[201712]",
-					"id": "11"
+					"id": "23"
 				},
 				{
 					"value": "December 2017"
@@ -324,7 +571,7 @@ var prism= {
  "context": {
 	"plugin": null,
 	"view": {
-		"id": "view:tabset=b0f71f3b-942b-45c0-953f-3e774aa91ba1;id=1116073311",
+		"id": "view:tabset=a927427e-aee2-4d10-81bd-9e505e68bf81;id=1116073311",
 		"uniqueId": 0,
 		"name": "Test",
 		"connectionString": "Provider=MSOLAP;Data Source=CLEANSERVER02\\SQL2016;Persist Security Info=False;Integrated Security=SSPI;Initial Catalog=HaloDemo_Coffee;Connect Timeout=30;Timeout=60",
@@ -368,16 +615,6 @@ var prism= {
 			"memberUniqueNames": [
 				"[Measures].[Revenue]"
 			]
-		},
-		{
-			"type": "Standard",
-			"name": "Sales Offices",
-			"uniqueName": "[Sales Rep].[Sales Offices]",
-			"levelName": "Sales Office",
-			"levelUniqueName": "[Sales Rep].[Sales Offices].[Sales Office]",
-			"dimensionName": "Sales Rep",
-			"memberNames": [],
-			"memberUniqueNames": []
 		}
 	],
 	"cube": {

@@ -1,48 +1,66 @@
 <!DOCTYPE html>
 <html>
   <head>
-    <title>Uploading a file</title>
-    
-    <!-- Include order: first jquery, then opencpu.js, and then your code -->
-    <script src="opencpu/jquery-1.10.2.min.js"></script>
-    <script src="opencpu/opencpu-0.4.js"></script>
-
-    <script>
-    //init this script when the page has loaded
-    $(document).ready(function(){
-      $("#submitbutton").on("click", function(){
-
-       
-        var configfile = $("#configfile")[0].files[0];
-         
-        var inputfile = $("#inputfile")[0].files[0];
       
-        if(!configfile){
-          alert("No config file selected.");
-          return;
-        }
-        if(!inputfile){
-          alert("No input file selected.");
-          return;
-        }
+  <script src="//code.jquery.com/jquery-1.10.2.min.js"></script> 
+<script src="//www.opencpu.org/js/archive/opencpu-0.4.js"></script>
+    <style>
+
+    div {
+  white-space: pre-wrap; 
+}
+
+#plotdiv {
+  width: 100%;
+  height: 600px;
+  border: 1px solid #e3e3e3;
+  border-radius: 4px;
+}
+    </style>
+ <script>// App Script
+ocpu.seturl("//kkdhuiyu.ocpu.io/Forecasting/R")
+
+var inputs = prism.pane.rows.slice(0, -1);
+var values = []
+var date2017 =[];
+var date2016 =[];
+for (i = 0 ; i <inputs.length ; i++){
+    date2016.push(inputs[i].data[1].value.split(" ")[0]);
+    date2017.push(inputs[i].data[1].value.split(" ")[0]);
+   values.push(parseFloat(inputs[i].data[2].value));
+}
+text = "Data:   \r\n2016 date from "+date2016[0] +" to "+date2016[date2016.length -1]+"   \n"+values.slice(0, 12) +" \n2017 date from "+date2017[0] +" to "+date2017[date2017.length -1]+"   \n"+values.slice(12, -1) ;
+
+// var value2017 = [];
+// var value2016 = [];
+// var values = value2016.push(value2017);
+
+// for (i = 0 ; i <inputs.length ; i++){
+//     date2016.push(inputs[i].data[1].value.split(" ")[0]);
+//     date2017.push(inputs[i].data[1].value.split(" ")[0]);
+//   value2017.push(parseFloat(inputs[i].data[2].value));
+//   value2016.push(parseFloat(inputs[i].data[3].value));
+// }
+
+// text = "Data:   \r\n2016 date from "+date2016[0] +" to "+date2016[date2016.length -1]+"   \n"+value2016 +" \n2017 date from "+date2017[0] +" to "+date2017[date2017.length -1]+"   \n"+value2017 ;
+$('#input_data').text(text);
+
+
+$(document).ready(function(){
+      $("#submitbutton").on("click", function(){
 
         //disable the button during upload
         $("#submitbutton").attr("disabled", "disabled");
-          alert("disabled");
+
         //perform the request
-        var req = ocpu.call("forecasting", {
-          inputFile: inputfile,
-          configFile: configfile
+        var req = ocpu.call("printsummary", {
+          mydata : values
+          
         }, function(session){
           $("#printlink").attr("href", session.getLoc() + "R/.val/print")
-          $("#rdalink").attr("href", session.getLoc() + "R/.val/rda")
-          $("#csvlink").attr("href", session.getLoc() + "R/.val/csv")
-          $("#tablink").attr("href", session.getLoc() + "R/.val/tab")
           $("#jsonlink").attr("href", session.getLoc() + "R/.val/json")
-          $("#mdlink").attr("href", session.getLoc() + "R/.val/md")
+
         });
-        
-     
         
         //if R returns an error, alert the error message
         req.fail(function(){
@@ -53,41 +71,689 @@
         req.always(function(){
           $("#submitbutton").removeAttr("disabled")
         });        
-      });       
-    });
+      });    
       
-    </script>
-    
-    <style>
+      
+      
+      $("#plotbutton").on("click", function(){
 
-    </style>
+        //disable the button during upload
+        $("#plotbutton").attr("disabled", "disabled");
+      
+        //perform the request
+        var req =$("#plotdiv").rplot("plot_forecasting", {
+          mydata : values
+          
+        }, function(session){
+          $("#printlink").attr("href", session.getLoc() + "R/.val/print")
+          $("#jsonlink").attr("href", session.getLoc() + "R/.val/json")
+
+        });
+        
+        //if R returns an error, alert the error message
+        req.fail(function(){
+          alert("Server error: " + req.responseText);
+        });
+        
+        //after request complete, re-enable the button 
+        req.always(function(){
+          $("#plotbutton").removeAttr("disabled")
+        });        
+      }); 
+    });
     
+    
+// App Script End
+
+// Prism data
+var prism= {
+ "pane" : {
+	"name": "Time",
+	"uniqueName": "[Time].[Time]",
+	"columns": [
+		{
+			"name": "id",
+			"caption": ""
+		},
+		{
+			"name": "name",
+			"caption": "Time"
+		},
+		{
+			"name": "col0",
+			"caption": "2017 : Revenue",
+			"fractionDigits": "0"
+		},
+		{
+			"name": "col1",
+			"caption": "2016 : Revenue",
+			"fractionDigits": "0"
+		},
+		{
+			"name": "col2",
+			"caption": "Var.% : ",
+			"fractionDigits": "2"
+		}
+	],
+	"rows": [
+		{
+			"data": [
+				{
+					"value": "[Time].[Time].[Year].&[2016].&[20161].&[201601]",
+					"id": "0"
+				},
+				{
+					"value": "January 2016"
+				},
+				{
+					"value": "3467532.16"
+				},
+				{
+					"value": ""
+				},
+				{
+					"value": ""
+				}
+			],
+			"selected": false
+		},
+		{
+			"data": [
+				{
+					"value": "[Time].[Time].[Year].&[2016].&[20161].&[201602]",
+					"id": "1"
+				},
+				{
+					"value": "February 2016"
+				},
+				{
+					"value": "3015730.99"
+				},
+				{
+					"value": ""
+				},
+				{
+					"value": ""
+				}
+			],
+			"selected": false
+		},
+		{
+			"data": [
+				{
+					"value": "[Time].[Time].[Year].&[2016].&[20161].&[201603]",
+					"id": "2"
+				},
+				{
+					"value": "March 2016"
+				},
+				{
+					"value": "3268106.67"
+				},
+				{
+					"value": ""
+				},
+				{
+					"value": ""
+				}
+			],
+			"selected": false
+		},
+		{
+			"data": [
+				{
+					"value": "[Time].[Time].[Year].&[2016].&[20162].&[201604]",
+					"id": "3"
+				},
+				{
+					"value": "April 2016"
+				},
+				{
+					"value": "2633098.33"
+				},
+				{
+					"value": ""
+				},
+				{
+					"value": ""
+				}
+			],
+			"selected": false
+		},
+		{
+			"data": [
+				{
+					"value": "[Time].[Time].[Year].&[2016].&[20162].&[201605]",
+					"id": "4"
+				},
+				{
+					"value": "May 2016"
+				},
+				{
+					"value": "4134126.12999999"
+				},
+				{
+					"value": ""
+				},
+				{
+					"value": ""
+				}
+			],
+			"selected": false
+		},
+		{
+			"data": [
+				{
+					"value": "[Time].[Time].[Year].&[2016].&[20162].&[201606]",
+					"id": "5"
+				},
+				{
+					"value": "June 2016"
+				},
+				{
+					"value": "4999100.55"
+				},
+				{
+					"value": ""
+				},
+				{
+					"value": ""
+				}
+			],
+			"selected": false
+		},
+		{
+			"data": [
+				{
+					"value": "[Time].[Time].[Year].&[2016].&[20163].&[201607]",
+					"id": "6"
+				},
+				{
+					"value": "July 2016"
+				},
+				{
+					"value": "5612759.3"
+				},
+				{
+					"value": ""
+				},
+				{
+					"value": ""
+				}
+			],
+			"selected": false
+		},
+		{
+			"data": [
+				{
+					"value": "[Time].[Time].[Year].&[2016].&[20163].&[201608]",
+					"id": "7"
+				},
+				{
+					"value": "August 2016"
+				},
+				{
+					"value": "5750717.18999999"
+				},
+				{
+					"value": ""
+				},
+				{
+					"value": ""
+				}
+			],
+			"selected": false
+		},
+		{
+			"data": [
+				{
+					"value": "[Time].[Time].[Year].&[2016].&[20163].&[201609]",
+					"id": "8"
+				},
+				{
+					"value": "September 2016"
+				},
+				{
+					"value": "5175161.39"
+				},
+				{
+					"value": ""
+				},
+				{
+					"value": ""
+				}
+			],
+			"selected": false
+		},
+		{
+			"data": [
+				{
+					"value": "[Time].[Time].[Year].&[2016].&[20164].&[201610]",
+					"id": "9"
+				},
+				{
+					"value": "October 2016"
+				},
+				{
+					"value": "4223637.59"
+				},
+				{
+					"value": ""
+				},
+				{
+					"value": ""
+				}
+			],
+			"selected": false
+		},
+		{
+			"data": [
+				{
+					"value": "[Time].[Time].[Year].&[2016].&[20164].&[201611]",
+					"id": "10"
+				},
+				{
+					"value": "November 2016"
+				},
+				{
+					"value": "3167378.07"
+				},
+				{
+					"value": ""
+				},
+				{
+					"value": ""
+				}
+			],
+			"selected": false
+		},
+		{
+			"data": [
+				{
+					"value": "[Time].[Time].[Year].&[2016].&[20164].&[201612]",
+					"id": "11"
+				},
+				{
+					"value": "December 2016"
+				},
+				{
+					"value": "4057891.13"
+				},
+				{
+					"value": ""
+				},
+				{
+					"value": ""
+				}
+			],
+			"selected": false
+		},
+		{
+			"data": [
+				{
+					"value": "[Time].[Time].[Year].&[2017].&[20171].&[201701]",
+					"id": "12"
+				},
+				{
+					"value": "January 2017"
+				},
+				{
+					"value": "7772103.076"
+				},
+				{
+					"value": "3467532.16"
+				},
+				{
+					"value": "124.139322070484",
+					"color": "#228B22"
+				}
+			],
+			"selected": false
+		},
+		{
+			"data": [
+				{
+					"value": "[Time].[Time].[Year].&[2017].&[20171].&[201702]",
+					"id": "13"
+				},
+				{
+					"value": "February 2017"
+				},
+				{
+					"value": "5668238.689"
+				},
+				{
+					"value": "3015730.99"
+				},
+				{
+					"value": "87.9557131519877",
+					"color": "#228B22"
+				}
+			],
+			"selected": false
+		},
+		{
+			"data": [
+				{
+					"value": "[Time].[Time].[Year].&[2017].&[20171].&[201703]",
+					"id": "14"
+				},
+				{
+					"value": "March 2017"
+				},
+				{
+					"value": "6195027.837"
+				},
+				{
+					"value": "3268106.67"
+				},
+				{
+					"value": "89.5601478944382",
+					"color": "#228B22"
+				}
+			],
+			"selected": false
+		},
+		{
+			"data": [
+				{
+					"value": "[Time].[Time].[Year].&[2017].&[20172].&[201704]",
+					"id": "15"
+				},
+				{
+					"value": "April 2017"
+				},
+				{
+					"value": "6030751.063"
+				},
+				{
+					"value": "2633098.33"
+				},
+				{
+					"value": "129.036302757444",
+					"color": "#228B22"
+				}
+			],
+			"selected": false
+		},
+		{
+			"data": [
+				{
+					"value": "[Time].[Time].[Year].&[2017].&[20172].&[201705]",
+					"id": "16"
+				},
+				{
+					"value": "May 2017"
+				},
+				{
+					"value": "8330625.743"
+				},
+				{
+					"value": "4134126.12999999"
+				},
+				{
+					"value": "101.508746492938",
+					"color": "#228B22"
+				}
+			],
+			"selected": false
+		},
+		{
+			"data": [
+				{
+					"value": "[Time].[Time].[Year].&[2017].&[20172].&[201706]",
+					"id": "17"
+				},
+				{
+					"value": "June 2017"
+				},
+				{
+					"value": "10818078.805"
+				},
+				{
+					"value": "4999100.55"
+				},
+				{
+					"value": "116.400504386734",
+					"color": "#228B22"
+				}
+			],
+			"selected": false
+		},
+		{
+			"data": [
+				{
+					"value": "[Time].[Time].[Year].&[2017].&[20173].&[201707]",
+					"id": "18"
+				},
+				{
+					"value": "July 2017"
+				},
+				{
+					"value": "12112592.83"
+				},
+				{
+					"value": "5612759.3"
+				},
+				{
+					"value": "115.804601312584",
+					"color": "#228B22"
+				}
+			],
+			"selected": false
+		},
+		{
+			"data": [
+				{
+					"value": "[Time].[Time].[Year].&[2017].&[20173].&[201708]",
+					"id": "19"
+				},
+				{
+					"value": "August 2017"
+				},
+				{
+					"value": "12953934.809"
+				},
+				{
+					"value": "5750717.18999999"
+				},
+				{
+					"value": "125.257726662786",
+					"color": "#228B22"
+				}
+			],
+			"selected": false
+		},
+		{
+			"data": [
+				{
+					"value": "[Time].[Time].[Year].&[2017].&[20173].&[201709]",
+					"id": "20"
+				},
+				{
+					"value": "September 2017"
+				},
+				{
+					"value": "11598304.929"
+				},
+				{
+					"value": "5175161.39"
+				},
+				{
+					"value": "124.114845025152",
+					"color": "#228B22"
+				}
+			],
+			"selected": false
+		},
+		{
+			"data": [
+				{
+					"value": "[Time].[Time].[Year].&[2017].&[20174].&[201710]",
+					"id": "21"
+				},
+				{
+					"value": "October 2017"
+				},
+				{
+					"value": "9095025.549"
+				},
+				{
+					"value": "4223637.59"
+				},
+				{
+					"value": "115.33631508853",
+					"color": "#228B22"
+				}
+			],
+			"selected": false
+		},
+		{
+			"data": [
+				{
+					"value": "[Time].[Time].[Year].&[2017].&[20174].&[201711]",
+					"id": "22"
+				},
+				{
+					"value": "November 2017"
+				},
+				{
+					"value": "7638035.277"
+				},
+				{
+					"value": "3167378.07"
+				},
+				{
+					"value": "141.14693946214",
+					"color": "#228B22"
+				}
+			],
+			"selected": false
+		},
+		{
+			"data": [
+				{
+					"value": "[Time].[Time].[Year].&[2017].&[20174].&[201712]",
+					"id": "23"
+				},
+				{
+					"value": "December 2017"
+				},
+				{
+					"value": "9809281.043"
+				},
+				{
+					"value": "4057891.13"
+				},
+				{
+					"value": "141.733470138712",
+					"color": "#228B22"
+				}
+			],
+			"selected": true
+		},
+		{
+			"data": [
+				{
+					"value": "[Time].[Time].[Year].&[2017]",
+					"id": "0"
+				},
+				{
+					"value": "2017"
+				},
+				{
+					"value": "108021999.65"
+				},
+				{
+					"value": "49505239.5"
+				},
+				{
+					"value": "118.20316544474",
+					"color": "#228B22"
+				}
+			],
+			"selected": false
+		}
+	]
+},
+ "context": {
+	"plugin": null,
+	"view": {
+		"id": "view:tabset=a927427e-aee2-4d10-81bd-9e505e68bf81;id=1116073311",
+		"uniqueId": 0,
+		"name": "Test",
+		"connectionString": "Provider=MSOLAP;Data Source=CLEANSERVER02\\SQL2016;Persist Security Info=False;Integrated Security=SSPI;Initial Catalog=HaloDemo_Coffee;Connect Timeout=30;Timeout=60",
+		"paneId": "001",
+		"timeHierarchyIndex": 0,
+		"userName": "jasper.jia",
+		"userDomain": "halo.nz",
+		"userType": "Administrator",
+		"userEmail": null,
+		"url": "http://localhost/Halo/?view=Users%7cjasper.jia%7cTest"
+	},
+	"hierarchies": [
+		{
+			"periodicity": "Period",
+			"dateRangeCount": 0,
+			"dateRangeLag": 0,
+			"isoDates": [],
+			"type": "Time",
+			"name": "Time",
+			"uniqueName": "[Time].[Time]",
+			"levelName": "Month",
+			"levelUniqueName": "[Time].[Time].[Month]",
+			"dimensionName": "Time",
+			"memberNames": [
+				"December"
+			],
+			"memberUniqueNames": [
+				"[Time].[Time].[Year].&[2017].&[20174].&[201712]"
+			]
+		},
+		{
+			"type": "Measures",
+			"name": "Measures",
+			"uniqueName": "[Measures]",
+			"levelName": null,
+			"levelUniqueName": null,
+			"dimensionName": "Measures",
+			"memberNames": [
+				""
+			],
+			"memberUniqueNames": [
+				"[Measures].[Revenue]"
+			]
+		}
+	],
+	"cube": {
+		"server": "CLEANSERVER02\\SQL2016",
+		"catalog": "HaloDemo_Coffee",
+		"cube": "Sales"
+	}
+} }</script>
   </head>
-    
+
   <body>
-    <h1>Uploading a File</h1>
+    <h1>Forecasting:</h1>
     
-    <b>config File</b> <input type="file" id="configfile"> 
-    <b>input File</b> <input type="file" id="inputfile"> 
-    <br />
-    
-    <br />
-    <button id="submitbutton" type="button">Upload CSV file!</button>
-    <br>
-
-    <p>Export the data frame:</p>
-
-    <ol>
-      <li><a target="_blank" id="rdalink">rdata</a></li>    
+    <h2>Users Data : </h2>
+      <div id = "input"><p id="input_data"></p></div>
+      
+      <h2>Algorithm: </h2>
+      <select id="interval">
+              <option selected="selected" value="ets">ets</option>
+              <option value="ARIMA">ARIMA</option>
+        </select> 
+        <button id="submitbutton" type="button">Submit</button>
+       
+      <h2>Plot</h2>
+       <button id="plotbutton" type="button">Plot</button>
+      <div id = "plotdiv"></div>
+<ol>
       <li><a target="_blank" id="jsonlink">json</a></li>
-      <li><a target="_blank" id="csvlink">csv</a></li>
-      <li><a target="_blank" id="tablink">tab</a></li>
       <li><a target="_blank" id="printlink">print</a></li>
-      <li><a target="_blank" id="mdlink">markdown</a></li>
+
     </ol>
-      <div id="plotdiv"></div>
-     
-
-
+    
   </body>
 </html>
