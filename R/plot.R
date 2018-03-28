@@ -23,12 +23,11 @@ plot_forecasting <- function(mydata,algo){
   
   myts <- ts(mydata, start=c(2016, 1), end=c(2017, 12), frequency=12)
   if(algorithm == "ets"){
-    print(plot(forecast(ets(myts))))
+    print(autoplot(forecast(ets(myts))))
   }else if(algorithm == "ARIMA"){
-    print(plot(forecast(auto.arima(myts))))
+    print(autoplot(forecast(auto.arima(myts))))
   }else{
-    # print(plot(forecast(myts)))
-    print(algorithm)
+    print(autoplot(forecast(myts)))
   }
 }
 
