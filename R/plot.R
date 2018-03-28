@@ -19,7 +19,7 @@ plot_forecasting <- function(mydata,algo){
     install.packages("forecast")
   }
   library(forecast)
-  algorithm = algo[0]
+  algorithm = algo
   
   myts <- ts(mydata, start=c(2016, 1), end=c(2017, 12), frequency=12)
   if(algorithm == "ets"){
