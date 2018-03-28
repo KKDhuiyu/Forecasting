@@ -15,5 +15,6 @@ printsummary <- function(mydata){
   }
   library(forecast)
   myts <- ts(mydata, start=c(2016, 1), end=c(2017, 12), frequency=12)
-  print(forecast(myts))
+  # print(forecast(myts))
+  print(myts)
 }
