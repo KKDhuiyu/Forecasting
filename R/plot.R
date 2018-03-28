@@ -2,7 +2,9 @@
 #' 
 #' @export
 #' @param mydata some object or dataset
-#' @param algorithm the forecasting fucntion to use
+#' @param algo the forecasting fucntion to use
+#' 
+#' 
 plot_forecasting <- function(mydata){
   # months = c ("1","2","3","4","5","6","7","8","9","10","11","12")
   # value1 = c(1,2,3,4,5,6,7,8,9,10,11,12)
