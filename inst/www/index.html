@@ -1,35 +1,109 @@
 <!DOCTYPE html>
-<html>
-  <head>
-  
-    <title>OpenCPU App Demo</title>
+<html lang="en">
+<head>
+<title>OpenCPU Markdown App</title>
     
-  </head>
-    
-  <body>
-    <h1>OpenCPU App Demo</h1>
-    
-    <p>
-      The sole purpose of this OpenCPU app is to demonstrate how to use the <a href="http://github.com/jeroenooms/opencpu.js"><tt>opencpu.js</tt></a> library to call R from Javascript using OpenCPU. 
-    </p>
-    
-    <h2>Introduction</h2>
-    
-    <p>The opencpu.js library depends on jQuery and provides some convenient wrappers around $.ajax to call the OpenCPU API.
-    A copy of jquery and opencpu.js must be included with your OpenCPU app.</p>
-    
-    <h2>Topics</h2>
-    
-    <p>Each topic consists of a minimal HTML page demonstrating basic functionality. Look at the source code of the HTML page to learn what is happening.</p>
-    
-    <ol>
-      <li><a href="hello.html">Calling a function</a></li>
-      <li><a href="plot.html">Making a plot</a></li>
-      <li><a href="data.html">Include data in a package</a></li>
-      <li><a href="upload.html">Upload a file</a></li>
-      <li><a href="chain.html">Chaining functions (use session)</a></li>
-    </ol>
+<script src="underscore-min.js"></script>    
+<script src="jquery-1.10.2.min.js"></script>
+<script src="opencpu-0.4.js"></script>
+<script src="src-min-noconflict/ace.js" type="text/javascript" charset="utf-8"></script>
 
-    
-  </body>
+<script>
+$(function(){
+  var editor = ace.edit("editor");
+  editor.setTheme("ace/theme/monokai");
+  editor.getSession().setMode("ace/mode/r");
+  editor.setFontSize("14px");
+
+  //This app requires OpenCPU 1.0.1 or higher!
+  
+  function domarkdown(e){
+    var req = ocpu.call("rmdtext", {
+      text : editor.getSession().getValue()
+    }, function(session){
+      $("iframe").attr('src', session.getFileURL("output.html"));     
+    }).fail(function(text){
+      alert("Error: " + req.responseText);
+    });
+  }
+
+  //auto run after 2 seconds of no activity
+  var update = _.debounce(domarkdown, 2000);
+  
+  //register event
+  editor.on("change", update);
+  
+  //init on start
+  domarkdown();  
+});
+</script>
+
+<style type="text/css" media="screen">
+ 
+#editor { 
+  position: absolute;
+  top: 0px;
+  left: 0px;
+  width: 100%;
+  height: 100%;
+}
+
+iframe { 
+  position: absolute;
+  top: 0px;
+  right: 0px;
+  width: 604px;
+  height: 100%;
+  border: 0;
+  margin: 0;
+  z-index: 999999;
+}
+
+</style>
+</head>
+<body>
+
+<div id="editor">The Normal Distribution
+=======================
+
+> Output automatically refreshes 5 seconds after editing markdown!
+
+The normal (or Gaussian) distribution is defined as follows:
+
+$$latex
+f(x;\mu,\sigma^2) = \frac{1}{\sigma\sqrt{2\pi}} 
+e^{ -\frac{1}{2}\left(\frac{x-\mu}{\sigma}\right)^2 }
+$$
+
+To generate random draws from a normal distribution we use the **rnorm** function:
+
+```{r block1}
+output <- rnorm(1000, 100, 15);
+```
+
+The normal distribution has the typical bell shape:
+
+```{r block2, fig.width=8, fig.height=5}
+library(ggplot2)
+qplot(output)
+```
+
+## Kernel density estimation
+
+We can perform density estimation on the sample:
+
+```{r block3, fig.width=8, fig.height=5}
+plot(density(output))
+``` 
+
+## Carl Friedrich Gauß
+
+This little guy had something to do with it
+
+!['Gauss'](https://goo.gl/eXN77h)
+</div>
+
+<iframe src="about:blank"></iframe>
+
+</body>
 </html>
