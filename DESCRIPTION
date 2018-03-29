@@ -4,11 +4,12 @@ Title: OpenCPU Demo Application
 Version: 1.0
 Date: 2017-05-13
 Author: Jeroen Ooms
-Maintainer: Jeroen Ooms <jeroen@berkeley.edu>
-Description: This package is an example of an OpenCPU App. It demonstrates
-    basic functionality of the API and Javascript library.
+Maintainer: Jasper Jia <jiahuiyu0328@gmail.com>
+Description: Halo Prism integration
 License: Apache2
 LazyData: true
 Imports:
     ggplot2,
     forecast
+Depends:
+    knitr
