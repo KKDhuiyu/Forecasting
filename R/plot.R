@@ -7,7 +7,10 @@
 #' @param endm
 #' @param starty
 #' @param endy
-plot_forecasting <- function(mydata,algo,startm,starty,endm,endy){
+#' @param startd
+#' @param endd
+#' @param freq
+plot_forecasting <- function(mydata,algo,startm,starty,endm,endy,startd,endd,freq){
   # months = c ("1","2","3","4","5","6","7","8","9","10","11","12")
   # value1 = c(1,2,3,4,5,6,7,8,9,10,11,12)
   # value2 = c(2,4,6,8,10,12,14,16,18,20,22,24)
@@ -22,8 +25,14 @@ plot_forecasting <- function(mydata,algo,startm,starty,endm,endy){
   }
   library(forecast)
   algorithm = algo
+  if(freq == "day"){
+    myts <- ts(mydata, start=c(starty, startm,startd), end=c(endy, endm,endd), frequency=365.25)
+  }else if (freq == "week"){
+    myts <- ts(mydata, start=c(starty, startm), end=c(endy, endm), frequency=52)
+  }else {
+    myts <- ts(mydata, start=c(starty, startm), end=c(endy, endm), frequency=12)
+  }
   
-  myts <- ts(mydata, start=c(starty, startm), end=c(endy, endm), frequency=12)
   if(algorithm == "ets"){
     print(autoplot(forecast(ets(myts))))
   }else if(algorithm == "ARIMA"){
