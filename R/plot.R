@@ -34,11 +34,11 @@ plot_forecasting <- function(mydata,algo,startm,starty,endm,endy,startd,endd,fre
   }
   
   if(algorithm == "ets"){
-    print(autoplot(forecast(ets(myts))))
+    print(autoplot(forecast(ets(myts,10))))
   }else if(algorithm == "ARIMA"){
-    print(autoplot(forecast(auto.arima(myts))))
+    print(autoplot(forecast(auto.arima(myts,10))))
   }else{
-    print(autoplot(forecast(myts)))
+    print(autoplot(forecast(myts,10)))
   }
 }
 
