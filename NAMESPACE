@@ -1,4 +1,4 @@
-export(hello)
+
 export(randomplot)
 export(readconfig)
 export(readinput)
