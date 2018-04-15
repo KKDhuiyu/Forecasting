@@ -37,6 +37,7 @@ function(mydata,startm,starty,endm,endy,startd,endd){
   forecast= zoo(forecast_value , seq(from = as.Date(end), 
                                      to = as.Date(end)+30, by = 1))
   plot(data,col ="green",xlim = c(as.Date(start),as.Date(end)+30))
+   
   
   lines(forecast,col ="red")
 }
