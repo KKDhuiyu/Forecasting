@@ -32,10 +32,9 @@ function(mydata,startm,starty,endm,endy,startd,endd){
                           frequency=30)),30)
   forecast_value =  as.numeric(forecast$mean)
   
-  data = zoo(mydata, seq(from = as.Date(start), 
-                         to = as.Date(end), by = 1))
-  forecast= zoo(forecast_value , seq(from = as.Date(end), 
-                                     to = as.Date(end)+30, by = 1))
+  data = zoo(mydata, seq(from = as.Date(start), to = as.Date(end), by = 1))
+  
+  forecast= zoo(forecast_value , seq(from = as.Date(end), to = as.Date(end)+30, by = 1))
   plot(data,col ="green",xlim = c(as.Date(start),as.Date(end)+30))
    
   
