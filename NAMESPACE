@@ -1,8 +1,2 @@
-
-export(randomplot)
-export(readconfig)
-export(readinput)
 export(printsummary)
-export(bostonhist)
 export(plot_forecasting)
-export(rmdtext)
