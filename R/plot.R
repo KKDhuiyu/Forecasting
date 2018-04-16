@@ -11,7 +11,7 @@
 #' @param endd
 #' @param freq
 function(mydata,startm,starty,endm,endy,startd,endd){
-   
+  
   if (!require("ggplot2")) {
     install.packages("ggplot2")
   }
