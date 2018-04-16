@@ -71,5 +71,5 @@ print_model <- function(algo,mydata,startm,starty,endm,endy,startd,endd,freq){
   
   forecast = forecast((ts(mydata, start=c(startm,startd), 
                           frequency=30)),30)
-  print(forecast$model)
+  print(forecast$model$method)
 }
