@@ -10,7 +10,7 @@
 #' @param startd
 #' @param endd
 #' @param freq
-plot_forecasting <- function(mydata,startm,starty,endm,endy,startd,endd){
+plot_forecasting <- function(algo,mydata,startm,starty,endm,endy,startd,endd,freq){
     
   if (!require("ggplot2")) {
     install.packages("ggplot2")
