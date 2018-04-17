@@ -1,2 +1,3 @@
 export(printsummary)
 export(plot_forecasting)
+export(plot_decomposition)

@@ -73,3 +73,40 @@ print_model <- function(algo,mydata,startm,starty,endm,endy,startd,endd,freq){
                           frequency=30)),30)
   print(forecast$model$method)
 }
+
+
+plot_decomposition <- function(algo,mydata,startm,starty,endm,endy,startd,endd,freq){
+  
+  if (!require("ggplot2")) {
+    install.packages("ggplot2")
+  }
+  library(ggplot2)
+  if (!require("forecast")) {
+    install.packages("forecast")
+  }
+  library(forecast)
+  
+  if (!require("zoo")) {
+    install.packages("zoo")
+  }
+  library(zoo)
+  start = paste(toString(starty),toString(startm),toString(startd),sep = "-")
+  end =  paste(toString(endy),toString(endm),toString(endd),sep = "-")
+  
+  decomposition = mstl((ts(mydata, start=c(startm,startd), 
+                          frequency=30)))
+  
+  len = length(mydata)
+  data = decomposition[1:len]
+  trend = decomposition[(len+1):(2*len)]
+  seasonal = decomposition[(2*len+1):(3*len)]
+  remainder = decomposition[(3*len+1):(4*len)]
+  
+  data = zoo(data, seq(from = as.Date(start), to = as.Date(end), by = 1))
+  trend = zoo(data, seq(from = as.Date(start), to = as.Date(end), by = 1))
+  seasonal = zoo(data, seq(from = as.Date(start), to = as.Date(end), by = 1))
+  remainder = zoo(data, seq(from = as.Date(start), to = as.Date(end), by = 1))
+  
+ 
+  autoplot(decomposition)
+}
