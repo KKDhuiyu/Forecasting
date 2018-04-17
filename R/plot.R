@@ -132,7 +132,7 @@ get_csv <- function(algo,mydata,startm,starty,endm,endy,startd,endd,freq){
   
   forecast = forecast((ts(mydata, start=c(startm,startd), 
                           frequency=30)),30)
-  
+  forecast_value =  as.numeric(forecast$mean)
   data = zoo(mydata, seq(from = as.Date(start), to = as.Date(end), by = 1))
   forecast_data= zoo(forecast_value , seq(from = as.Date(end), to = as.Date(end)+30, by = 1))
   
