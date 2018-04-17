@@ -55,7 +55,14 @@ printsummary <- function(algo,mydata,startm,starty,endm,endy,startd,endd,freq){
   
   forecast = forecast((ts(mydata, start=c(startm,startd), 
                           frequency=30)),30)
-  print(forecast)
+  f = forecast$mean
+  
+  forecast_data <- data.frame(
+    Date = index(f),
+    Value = coredata(f)
+  )
+
+  print(forecast_data)
 }
 print_model <- function(algo,mydata,startm,starty,endm,endy,startd,endd,freq){
   if (!require("ggplot2")) {
