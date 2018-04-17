@@ -110,3 +110,36 @@ plot_decomposition <- function(algo,mydata,startm,starty,endm,endy,startd,endd,f
  
   autoplot(decomposition)
 }
+
+get_csv <- function(algo,mydata,startm,starty,endm,endy,startd,endd,freq){
+  if (!require("ggplot2")) {
+    install.packages("ggplot2")
+  }
+  library(ggplot2)
+  if (!require("forecast")) {
+    install.packages("forecast")
+  }
+  library(forecast)
+  start = paste(toString(starty),toString(startm),toString(startd),sep = "-")
+  end =  paste(toString(endy),toString(endm),toString(endd),sep = "-")
+  
+  forecast = forecast((ts(mydata, start=c(startm,startd), 
+                          frequency=30)),30)
+  
+  data = zoo(mydata, seq(from = as.Date(start), to = as.Date(end), by = 1))
+  forecast_data= zoo(forecast_value , seq(from = as.Date(end), to = as.Date(end)+30, by = 1))
+  
+  original_data <- data.frame(
+    Date = index(data),
+    Value = coredata(data)
+  )
+  
+  forecast_data <- data.frame(
+    Date = index(forecast_data),
+    Value = coredata(forecast_data)
+  )
+  all_data <- rbind(original_data,forecast_data)
+  print(all_data)
+}
+
+
