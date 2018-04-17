@@ -122,6 +122,11 @@ get_csv <- function(algo,mydata,startm,starty,endm,endy,startd,endd,freq){
     install.packages("forecast")
   }
   library(forecast)
+  
+  if (!require("zoo")) {
+    install.packages("zoo")
+  }
+  library(zoo)
   start = paste(toString(starty),toString(startm),toString(startd),sep = "-")
   end =  paste(toString(endy),toString(endm),toString(endd),sep = "-")
   
@@ -141,8 +146,8 @@ get_csv <- function(algo,mydata,startm,starty,endm,endy,startd,endd,freq){
     Value = coredata(forecast_data)
   )
   all_data <- rbind(original_data,forecast_data)
-  all_data <- split(all_data, seq(nrow(all_data)))
-  print(forecast_data)
+  # all_data <- split(all_data, seq(nrow(all_data)))
+  print(all_data)
 }
 
 
