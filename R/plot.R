@@ -142,7 +142,7 @@ get_csv <- function(algo,mydata,startm,starty,endm,endy,startd,endd,freq){
   )
   all_data <- rbind(original_data,forecast_data)
   all_data <- split(all_data, seq(nrow(all_data)))
-  print(all_data)
+  print(forecast_data)
 }
 
 
