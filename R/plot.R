@@ -55,14 +55,9 @@ printsummary <- function(algo,mydata,startm,starty,endm,endy,startd,endd,freq){
   
   forecast = forecast((ts(mydata, start=c(startm,startd), 
                           frequency=30)),30)
-  f = forecast$mean
-  
-  forecast_data <- data.frame(
-    Date = index(f),
-    Value = coredata(f)
-  )
 
-  print(forecast_data)
+
+  print(forecast)
 }
 print_model <- function(algo,mydata,startm,starty,endm,endy,startd,endd,freq){
   if (!require("ggplot2")) {
@@ -146,6 +141,7 @@ get_csv <- function(algo,mydata,startm,starty,endm,endy,startd,endd,freq){
     Value = coredata(forecast_data)
   )
   all_data <- rbind(original_data,forecast_data)
+  all_data <- split(all_data, seq(nrow(all_data)))
   print(all_data)
 }
 
