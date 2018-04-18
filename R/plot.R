@@ -72,11 +72,11 @@ print_model <- function(algo,mydata,startm,starty,endm,endy,startd,endd,freq){
   end =  paste(toString(endy),toString(endm),toString(endd),sep = "-")
   ts = ts(mydata, start=c(startm,startd), 
           frequency=30)
-  if (algo = "ets"){
+  if (algo == "ets"){
     forecast = forecast(ets(ts),30)
-  }else if(algo = "ARIMA"){
+  }else if(algo == "ARIMA"){
     forecast = forecast(auto.arima(ts),30)
-  }else if(algo = "stlf"){
+  }else if(algo == "stlf"){
     forecast = forecast(stlf(ts),30)
   }else{
     forecast = forecast((ts),30)
