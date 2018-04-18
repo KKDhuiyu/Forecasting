@@ -74,7 +74,7 @@ print_model <- function(algo,mydata,startm,starty,endm,endy,startd,endd,freq){
           frequency=30)
   if (algo == "ets"){
     forecast = forecast(ets(ts),30)
-    print(forecast$method)s
+    print(forecast$method)
   }else if(algo == "ARIMA"){
     forecast = forecast(auto.arima(ts),30)
     print(forecast$method)
