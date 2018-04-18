@@ -74,14 +74,18 @@ print_model <- function(algo,mydata,startm,starty,endm,endy,startd,endd,freq){
           frequency=30)
   if (algo == "ets"){
     forecast = forecast(ets(ts),30)
+    print(forecast$method)s
   }else if(algo == "ARIMA"){
     forecast = forecast(auto.arima(ts),30)
+    print(forecast$method)
   }else if(algo == "stlf"){
     forecast = forecast(stlf(ts),30)
+    print(forecast$method)
   }else{
     forecast = forecast((ts),30)
+    print(forecast$model$method)
   }
-  print(forecast$model$method)
+  
 }
 
 
@@ -138,8 +142,21 @@ get_csv <- function(algo,mydata,startm,starty,endm,endy,startd,endd,freq){
   start = paste(toString(starty),toString(startm),toString(startd),sep = "-")
   end =  paste(toString(endy),toString(endm),toString(endd),sep = "-")
   
-  forecast = forecast((ts(mydata, start=c(startm,startd), 
-                          frequency=30)),30)
+  ts = ts(mydata, start=c(startm,startd), frequency=30)
+  if (algo == "ets"){
+    forecast = forecast(ets(ts),30)
+
+  }else if(algo == "ARIMA"){
+    forecast = forecast(auto.arima(ts),30)
+  
+  }else if(algo == "stlf"){
+    forecast = forecast(stlf(ts),30)
+
+  }else{
+    forecast = forecast((ts),30)
+
+  }
+
   forecast_value =  as.numeric(forecast$mean)
   data = zoo(mydata, seq(from = as.Date(start), to = as.Date(end), by = 1))
   forecast_data= zoo(forecast_value , seq(from = as.Date(end), to = as.Date(end)+30, by = 1))
