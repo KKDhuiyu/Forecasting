@@ -72,7 +72,7 @@ print_model <- function(algo,mydata,startm,starty,endm,endy,startd,endd,freq){
   start = paste(toString(starty),toString(startm),toString(startd),sep = "-")
   end =  paste(toString(endy),toString(endm),toString(endd),sep = "-")
   
-  
+  ts = ts(mydata, start=c(startm,startd), frequency=30)
   if (algo == "ets"){
     forecast = forecast(ets(ts),30)
     print(forecast$method)
