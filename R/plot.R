@@ -94,7 +94,7 @@ print_model <- function(algo,mydata,startm,starty,endm,endy,startd,endd,freq){
     forecast = forecast((ts),30)
     print(forecast$model$method)
   }
-  print (freq)
+
 }
 
 
