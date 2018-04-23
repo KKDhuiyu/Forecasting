@@ -59,29 +59,7 @@ printsummary <- function(algo,mydata,startm,starty,endm,endy,startd,endd,freq){
 
   print(forecast)
 }
-generate_ts <-function (algo,mydata,startm,starty,endm,endy,startd,endd,freq){
-  if(freq == "Date"){
-    freq = 30
-    ts = ts(mydata, start=c(startm,startd), 
-            frequency=freq)
-  }else if(freq=="Month"){
-    freq = 12
-    ts = ts(mydata, start=c(starty,startm), 
-            frequency=freq)
-  }else if(freq=="Quarter"){
-    freq = 4
-    ts = ts(mydata, start=c(starty,startm), 
-            frequency=freq)
-  }else if(freq=="Year"){
-    freq = 1
-    ts = ts(mydata, start=c(starty), 
-            frequency=freq)
-  }else{
-    ts = ts(mydata, start=c(starty), 
-            frequency=1)
-  }
-  return ts
-}
+
 print_model <- function(algo,mydata,startm,starty,endm,endy,startd,endd,freq){
   if (!require("ggplot2")) {
     install.packages("ggplot2")
