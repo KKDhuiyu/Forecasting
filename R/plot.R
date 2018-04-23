@@ -72,7 +72,15 @@ print_model <- function(algo,mydata,startm,starty,endm,endy,startd,endd,freq){
   start = paste(toString(starty),toString(startm),toString(startd),sep = "-")
   end =  paste(toString(endy),toString(endm),toString(endd),sep = "-")
   
-  ts = ts(mydata, start=c(startm,startd), frequency=30)
+  if(freq=="Date"){
+    ts = ts(mydata, start=c(startm,startd), frequency=30)
+  }else if(freq=="Month"){
+    ts = ts(mydata, start=c(starty,startm), frequency=12)
+  } else if(freq=="Quarter"){
+    ts = ts(mydata, start=c(starty,startm), frequency=4)
+  } else {
+    ts = ts(mydata, start=c(starty), frequency=1)
+  } 
   if (algo == "ets"){
     forecast = forecast(ets(ts),30)
     print(forecast$method)
@@ -86,7 +94,7 @@ print_model <- function(algo,mydata,startm,starty,endm,endy,startd,endd,freq){
     forecast = forecast((ts),30)
     print(forecast$model$method)
   }
-  
+  print (freq)
 }
 
 
@@ -142,13 +150,13 @@ get_csv <- function(algo,mydata,startm,starty,endm,endy,startd,endd,freq){
   library(zoo)
   start = paste(toString(starty),toString(startm),toString(startd),sep = "-")
   end =  paste(toString(endy),toString(endm),toString(endd),sep = "-")
-  ts = ts(mydata, start=c(starty), frequency=1)
+
   if(freq=="Date"){
     ts = ts(mydata, start=c(startm,startd), frequency=30)
   }else if(freq=="Month"){
     ts = ts(mydata, start=c(starty,startm), frequency=12)
   } else if(freq=="Quarter"){
-    ts = ts(mydata, start=c(startm,startd), frequency=4)
+    ts = ts(mydata, start=c(starty,startm), frequency=4)
   } else {
     ts = ts(mydata, start=c(starty), frequency=1)
   } 
