@@ -41,7 +41,24 @@ plot_forecasting <- function(algo,mydata,startm,starty,endm,endy,startd,endd,fre
   lines(forecast,col ="red")
 }
 
+printsummary <- function(algo,mydata,startm,starty,endm,endy,startd,endd,freq){
+  if (!require("ggplot2")) {
+    install.packages("ggplot2")
+  }
+  library(ggplot2)
+  if (!require("forecast")) {
+    install.packages("forecast")
+  }
+  library(forecast)
+  start = paste(toString(starty),toString(startm),toString(startd),sep = "-")
+  end =  paste(toString(endy),toString(endm),toString(endd),sep = "-")
+  
+  forecast = forecast((ts(mydata, start=c(startm,startd), 
+                          frequency=30)),30)
 
+
+  print(forecast)
+}
 generate_ts <-function (algo,mydata,startm,starty,endm,endy,startd,endd,freq){
   if(freq == "Date"){
     freq = 30
