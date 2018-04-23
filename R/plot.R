@@ -142,8 +142,16 @@ get_csv <- function(algo,mydata,startm,starty,endm,endy,startd,endd,freq){
   library(zoo)
   start = paste(toString(starty),toString(startm),toString(startd),sep = "-")
   end =  paste(toString(endy),toString(endm),toString(endd),sep = "-")
+  if(freq=="Date"){
+    ts = ts(mydata, start=c(startm,startd), frequency=30)
+  }else if(freq=="Month"){
+    ts = ts(mydata, start=c(starty,startm), frequency=12)
+  } else if(freq=="Quarter"){
+    ts = ts(mydata, start=c(startm,startd), frequency=4)
+  } else {
+    ts = ts(mydata, start=c(starty), frequency=1)
+  } 
   
-  ts = ts(mydata, start=c(startm,startd), frequency=30)
   if (algo == "ets"){
     forecast = forecast(ets(ts),30)
 
