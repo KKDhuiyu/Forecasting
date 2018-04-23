@@ -76,7 +76,18 @@ plot_decomposition <- function(algo,mydata,startm,starty,endm,endy,startd,endd,f
   autoplot(decomposition)
 }
 
-generate_ts <-function (algo,mydata,startm,starty,endm,endy,startd,endd,freq){
+
+print_model <- function(algo,mydata,startm,starty,endm,endy,startd,endd,freq){
+  if (!require("ggplot2")) {
+    install.packages("ggplot2")
+  }
+  library(ggplot2)
+  if (!require("forecast")) {
+    install.packages("forecast")
+  }
+  library(forecast)
+  start = paste(toString(starty),toString(startm),toString(startd),sep = "-")
+  end =  paste(toString(endy),toString(endm),toString(endd),sep = "-")
   if(freq == "Date"){
     freq = 30
     ts = ts(mydata, start=c(startm,startd), 
@@ -97,20 +108,6 @@ generate_ts <-function (algo,mydata,startm,starty,endm,endy,startd,endd,freq){
     ts = ts(mydata, start=c(starty), 
             frequency=1)
   }
-  return ts
-}
-print_model <- function(algo,mydata,startm,starty,endm,endy,startd,endd,freq){
-  if (!require("ggplot2")) {
-    install.packages("ggplot2")
-  }
-  library(ggplot2)
-  if (!require("forecast")) {
-    install.packages("forecast")
-  }
-  library(forecast)
-  start = paste(toString(starty),toString(startm),toString(startd),sep = "-")
-  end =  paste(toString(endy),toString(endm),toString(endd),sep = "-")
-  ts = generate_ts(algo,mydata,startm,starty,endm,endy,startd,endd,freq)
   
   if (algo == "ets"){
     forecast = forecast(ets(ts))
@@ -145,7 +142,26 @@ get_csv <- function(algo,mydata,startm,starty,endm,endy,startd,endd,freq){
   start = paste(toString(starty),toString(startm),toString(startd),sep = "-")
   end =  paste(toString(endy),toString(endm),toString(endd),sep = "-")
   
-  ts = ts(mydata, start=c(startm,startd), frequency=30)
+  if(freq == "Date"){
+    freq = 30
+    ts = ts(mydata, start=c(startm,startd), 
+            frequency=freq)
+  }else if(freq=="Month"){
+    freq = 12
+    ts = ts(mydata, start=c(starty,startm), 
+            frequency=freq)
+  }else if(freq=="Quarter"){
+    freq = 4
+    ts = ts(mydata, start=c(starty,startm), 
+            frequency=freq)
+  }else if(freq=="Year"){
+    freq = 1
+    ts = ts(mydata, start=c(starty), 
+            frequency=freq)
+  }else{
+    ts = ts(mydata, start=c(starty), 
+            frequency=1)
+  }
   if (algo == "ets"){
     forecast = forecast(ets(ts),30)
 
