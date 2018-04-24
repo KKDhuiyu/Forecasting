@@ -131,16 +131,16 @@ plot_decomposition <- function(algo,mydata,startm,starty,endm,endy,startd,endd,f
   } 
   
   
-  len = length(mydata)
-  data = decomposition[1:len]
-  trend = decomposition[(len+1):(2*len)]
-  seasonal = decomposition[(2*len+1):(3*len)]
-  remainder = decomposition[(3*len+1):(4*len)]
-  
-  data = zoo(data, seq(from = as.Date(start), to = as.Date(end), by = 1))
-  trend = zoo(data, seq(from = as.Date(start), to = as.Date(end), by = 1))
-  seasonal = zoo(data, seq(from = as.Date(start), to = as.Date(end), by = 1))
-  remainder = zoo(data, seq(from = as.Date(start), to = as.Date(end), by = 1))
+  # len = length(mydata)
+  # data = decomposition[1:len]
+  # trend = decomposition[(len+1):(2*len)]
+  # seasonal = decomposition[(2*len+1):(3*len)]
+  # remainder = decomposition[(3*len+1):(4*len)]
+  # 
+  # data = zoo(data, seq(from = as.Date(start), to = as.Date(end), by = 1))
+  # trend = zoo(data, seq(from = as.Date(start), to = as.Date(end), by = 1))
+  # seasonal = zoo(data, seq(from = as.Date(start), to = as.Date(end), by = 1))
+  # remainder = zoo(data, seq(from = as.Date(start), to = as.Date(end), by = 1))
   
  
   autoplot(decomposition)
