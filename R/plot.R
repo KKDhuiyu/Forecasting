@@ -116,8 +116,20 @@ plot_decomposition <- function(algo,mydata,startm,starty,endm,endy,startd,endd,f
   start = paste(toString(starty),toString(startm),toString(startd),sep = "-")
   end =  paste(toString(endy),toString(endm),toString(endd),sep = "-")
   
-  decomposition = mstl((ts(mydata, start=c(startm,startd), 
-                          frequency=30)))
+  if(freq=="Date"){
+    decomposition = mstl((ts(mydata, start=c(startm,startd), 
+                             frequency=30)))
+  }else if(freq=="Month"){
+    decomposition = mstl((ts(mydata, start=c(starty,startm), 
+                             frequency=12)))
+  } else if(freq=="Quarter"){
+    decomposition = mstl((ts(mydata, start=c(starty,startm), 
+                             frequency=4)))
+  } else {
+    decomposition = mstl((ts(mydata, start=c(starty), 
+                             frequency=1)))
+  } 
+  
   
   len = length(mydata)
   data = decomposition[1:len]
