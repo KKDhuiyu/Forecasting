@@ -176,8 +176,20 @@ get_csv <- function(algo,mydata,startm,starty,endm,endy,startd,endd,freq){
   }
 
   forecast_value =  as.numeric(forecast$mean)
-  data = zoo(mydata, seq(from = as.Date(start), to = as.Date(end), by = 1))
-  forecast_data= zoo(forecast_value , seq(from = as.Date(end), to = as.Date(end)+30, by = 1))
+  if(freq=="Date"){
+    data = zoo(mydata, seq(from = as.Date(start), to = as.Date(end), by = 1))
+    forecast_data= zoo(forecast_value , seq(from = as.Date(end), to = as.Date(end)+30, by = 1))
+  }else if(freq=="Month"){
+    data = zoo(mydata, seq(from = as.Date(start), to = as.Date(end), by = 30))
+    forecast_data= zoo(forecast_value , seq(from = as.Date(end), to = as.Date(end)+90, by = 30))
+  } else if(freq=="Quarter"){
+    data = zoo(mydata, seq(from = as.Date(start), to = as.Date(end), by = 1))
+    forecast_data= zoo(forecast_value , seq(from = as.Date(end), to = as.Date(end)+30, by = 1))
+  } else {
+    data = zoo(mydata, seq(from = as.Date(start), to = as.Date(end), by = 1))
+    forecast_data= zoo(forecast_value , seq(from = as.Date(end), to = as.Date(end)+30, by = 1))
+  } 
+ 
   
   original_data <- data.frame(
     Date = index(data),
