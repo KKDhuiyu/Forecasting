@@ -106,7 +106,6 @@ function show_table(values) {
 function plot_daily_charts(values, algo, starty, startm, startd, endy, endm, endd, freq, s_date, e_date, null_list) {
 
     var algo = $('#algorithms').find(":selected").val();
-    // request 2: summary 
     var req2 = ocpu.call("get_csv", {
         mydata: values,
         algo: algo,

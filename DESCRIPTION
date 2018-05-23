@@ -3,7 +3,7 @@ Type: Package
 Title: OpenCPU Demo Application
 Version: 1.0
 Date: 2017-05-13
-Author: Jeroen Ooms
+Author: Jasper Jia
 Maintainer: Jasper Jia <jiahuiyu0328@gmail.com>
 Description: Halo Prism integration
 License: Apache2

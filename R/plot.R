@@ -217,4 +217,9 @@ get_csv <- function(algo,mydata,startm,starty,endm,endy,startd,endd,freq){
   print(all_data)
 }
 
+rmdtext <- function(text){
+  writeLines(text, con="input.Rmd");
+  knit2html("input.Rmd", output="output.html");
+  invisible();
+}
 
